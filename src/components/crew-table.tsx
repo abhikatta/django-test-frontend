@@ -3,6 +3,15 @@ import { CrewMember } from "@/types/global";
 import { clientAPI } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
 import useGetCrew from "@/hooks/use-get-crew";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
+import { Button } from "./ui/button";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
@@ -24,49 +33,46 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   };
 
   return (
-    <button
-      className="bg-red-200 text-lg text-red-500 px-1.5 py-1"
-      onClick={() => deleteCrew(item.id)}>
+    <Button variant="destructive" onClick={() => deleteCrew(item.id)}>
       Delete
-    </button>
+    </Button>
   );
 };
 
 const CrewTable = () => {
   const { crew, crewMemberKeys } = useGetCrew();
   return (
-    <table>
-      <thead>
-        <tr>
+    <Table>
+      <TableHeader>
+        <TableRow>
           {crewMemberKeys.map((rowitem, index) => (
-            <td key={index} className="pr-[3rem] text-left">
-              {rowitem}
-            </td>
+            <TableHead key={index}>{rowitem}</TableHead>
           ))}
-        </tr>
-      </thead>
-      <tbody>
+          <TableHead>Delete Crew Member</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {crew.map((item) => (
-          <tr key={item.id}>
-            <td>{item.first_name}</td>
-            <td>{item.last_name}</td>
-            <td>{item.email}</td>
-            <td>{item.is_active ? "Active" : "Inactive"}</td>
-            <td>
+          <TableRow key={item.id}>
+            <TableCell>{item.first_name}</TableCell>
+            <TableCell>{item.last_name}</TableCell>
+            <TableCell>{item.email}</TableCell>
+            <TableCell>{item.is_active ? "Active" : "Inactive"}</TableCell>
+            <TableCell>
               {!item.is_active
                 ? "Removed"
                 : item.is_tasked
                 ? "Working"
                 : "Available"}
-            </td>
-            <td>{item.hourly_wage}</td>
-            <td>
+            </TableCell>
+            <TableCell>{item.hourly_wage}</TableCell>
+            <TableCell>
               <DeleteCrewButton item={item} />
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 };
 
