@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCrewStore } from "@/store/crew-store";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Checkbox } from "./ui/checkbox";
+import { Switch } from "./ui/switch";
 
 const CreateCrewForm = () => {
   const { addCrewMember } = useCrewStore();
@@ -15,7 +15,10 @@ const CreateCrewForm = () => {
     formState: { errors },
     register,
     reset,
-  } = useForm<CreateCrewSchema>({});
+  } = useForm<CreateCrewSchema>({
+    reValidateMode: "onChange",
+    resolver: zodResolver(createCrewSchema),
+  });
 
   const onSubmit = async (data: CreateCrewSchema) => {
     try {
@@ -45,15 +48,18 @@ const CreateCrewForm = () => {
         <Input {...register("last_name")} placeholder="Last Name"></Input>
         <Input {...register("email")} placeholder="Email" type="email"></Input>
         <div className="flex flex-row items-center w-auto justify-between gap-x-2">
-          <Checkbox {...register("is_active")} id="isActive"></Checkbox>
+          <Switch
+            defaultChecked
+            {...register("is_active")}
+            id="isActive"></Switch>
           <label htmlFor="isActive" className="whitespace-nowrap">
-            Is Active
+            Is the crew member currently active and ready to work?
           </label>
         </div>
         <div className="flex flex-row items-center justify-between gap-x-2">
-          <Checkbox {...register("is_tasked")} id="isTasked"></Checkbox>
+          <Switch {...register("is_tasked")} id="isTasked"></Switch>
           <label htmlFor="isTasked" className="whitespace-nowrap">
-            Is Tasked
+            Is the crew member already assigned a work?
           </label>
         </div>
         <Input

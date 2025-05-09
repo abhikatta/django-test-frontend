@@ -13,7 +13,7 @@ import {
 } from "./ui/table";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import { Edit3, Trash2 } from "lucide-react";
+import { Edit3, Loader2, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogHeader,
@@ -24,11 +24,16 @@ import {
   DialogTrigger,
   DialogClose,
 } from "./ui/dialog";
+import { useState } from "react";
+import { Badge } from "./ui/badge";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
+  const [disabled, setDisabled] = useState(false);
+
   const deleteCrew = async (id: number) => {
     try {
+      setDisabled(true);
       const res = await fetch(clientAPI.crew, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -39,11 +44,13 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
       if (res.ok) {
         removeCrewMember(item.id);
       }
+      setDisabled(false);
     } catch (error) {
       console.error(error);
+      setDisabled(false);
     }
   };
-  const fullName = `${item.last_name} ${item.last_name}`;
+  const fullName = `${item.first_name} ${item.last_name}`;
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -61,10 +68,13 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
-            <Button>Cancel</Button>
+            <Button disabled={disabled}>Cancel</Button>
           </DialogClose>
-          <Button variant={"destructive"} onClick={() => deleteCrew(item.id)}>
-            Delete
+          <Button
+            disabled={disabled}
+            variant={"destructive"}
+            onClick={() => deleteCrew(item.id)}>
+            {disabled && <Loader2 className="animate-spin" />} Delete
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -91,20 +101,19 @@ const CrewTable = () => {
             <TableCell>{item.last_name}</TableCell>
             <TableCell>{item.email}</TableCell>
             <TableCell>{item.is_active ? "Active" : "Inactive"}</TableCell>
-            <TableCell className="flex justify-around mt-2 items-center">
-              <div
+            <TableCell className="flex justify-around items-center">
+              <Badge
                 className={cn(
-                  "rounded-3xl text-secondary size-2",
-                  !item.is_tasked ? "bg-green-400" : "bg-gray-400"
-                )}
-              />
-              <span>
+                  item.is_tasked
+                    ? "bg-gray-500 dark:bg-gray-400"
+                    : "bg-green-500 dark:bg-green-400"
+                )}>
                 {!item.is_active
                   ? "Removed"
                   : item.is_tasked
                   ? "Working"
                   : "Available"}
-              </span>
+              </Badge>
             </TableCell>
             <TableCell>{item.hourly_wage}</TableCell>
             <TableCell className="flex items-center justify-evenly">
