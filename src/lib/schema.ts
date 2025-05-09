@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 export const createCrewSchema = z.object({
   first_name: z
     .string()
@@ -16,7 +15,7 @@ export const createCrewSchema = z.object({
     .email("Invalid email address"),
   is_active: z.coerce.boolean().default(true),
   is_tasked: z.coerce.boolean().default(false),
-  hourly_wage: z.string().default("0"),
+  hourly_wage: z.coerce.number().min(0).default(0),
 });
 
 export type CreateCrewSchema = z.infer<typeof createCrewSchema>;

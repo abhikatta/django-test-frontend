@@ -15,9 +15,7 @@ const CreateCrewForm = () => {
     formState: { errors },
     register,
     reset,
-  } = useForm<CreateCrewSchema>({
-    resolver: zodResolver(createCrewSchema),
-  });
+  } = useForm<CreateCrewSchema>({});
 
   const onSubmit = async (data: CreateCrewSchema) => {
     try {
@@ -25,11 +23,7 @@ const CreateCrewForm = () => {
       const res = await fetch(clientAPI.crew, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          is_active: data.is_active ? true : false,
-          is_tasked: data.is_tasked ? true : false,
-        }),
+        body: JSON.stringify(data),
       });
       if (res.ok) {
         const crewData = await res.json();

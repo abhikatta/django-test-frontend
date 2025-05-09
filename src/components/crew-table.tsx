@@ -12,6 +12,18 @@ import {
   TableRow,
 } from "./ui/table";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+import { Edit3, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogFooter,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "./ui/dialog";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
@@ -31,11 +43,32 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
       console.error(error);
     }
   };
-
+  const fullName = `${item.last_name} ${item.last_name}`;
   return (
-    <Button variant="destructive" onClick={() => deleteCrew(item.id)}>
-      Delete
-    </Button>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="destructive" size={"icon"}>
+          <Trash2 />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Delete {fullName}?</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete your crew member {fullName}? This
+            action is irreversible!
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button>Cancel</Button>
+          </DialogClose>
+          <Button variant={"destructive"} onClick={() => deleteCrew(item.id)}>
+            Delete
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -48,7 +81,7 @@ const CrewTable = () => {
           {crewMemberKeys.map((rowitem, index) => (
             <TableHead key={index}>{rowitem}</TableHead>
           ))}
-          <TableHead>Delete Crew Member</TableHead>
+          <TableHead>Settings</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -58,16 +91,27 @@ const CrewTable = () => {
             <TableCell>{item.last_name}</TableCell>
             <TableCell>{item.email}</TableCell>
             <TableCell>{item.is_active ? "Active" : "Inactive"}</TableCell>
-            <TableCell>
-              {!item.is_active
-                ? "Removed"
-                : item.is_tasked
-                ? "Working"
-                : "Available"}
+            <TableCell className="flex justify-around mt-2 items-center">
+              <div
+                className={cn(
+                  "rounded-3xl text-secondary size-2",
+                  !item.is_tasked ? "bg-green-400" : "bg-gray-400"
+                )}
+              />
+              <span>
+                {!item.is_active
+                  ? "Removed"
+                  : item.is_tasked
+                  ? "Working"
+                  : "Available"}
+              </span>
             </TableCell>
             <TableCell>{item.hourly_wage}</TableCell>
-            <TableCell>
+            <TableCell className="flex items-center justify-evenly">
               <DeleteCrewButton item={item} />
+              <Button variant={"outline"} size={"icon"}>
+                <Edit3 />
+              </Button>
             </TableCell>
           </TableRow>
         ))}
