@@ -2,5 +2,5 @@
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const clientAPI = {
-  account: `${BASE_URL}/api/account/`,
+  crew: `${BASE_URL}/api/crew/`,
 };

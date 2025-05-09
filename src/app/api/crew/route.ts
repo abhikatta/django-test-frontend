@@ -1,11 +1,11 @@
-import { createAccountSchema } from "@/lib/schema";
+import { createCrewSchema } from "@/lib/schema";
 import { api } from "@/lib/server/constants-secret";
 import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
   try {
     const json = await request.json();
-    const result = createAccountSchema.safeParse(json);
+    const result = createCrewSchema.safeParse(json);
 
     if (!result.success) {
       return new NextResponse(
@@ -15,7 +15,7 @@ export const POST = async (request: Request) => {
     }
 
     const data = result.data;
-    const res = await fetch(`${process.env.BASE_URL}${api.accounts}`, {
+    const res = await fetch(`${process.env.BASE_URL}${api.crew}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export const POST = async (request: Request) => {
 
 export const GET = async () => {
   try {
-    const res = await fetch(`${process.env.BASE_URL}${api.accounts}`);
+    const res = await fetch(`${process.env.BASE_URL}${api.crew}`);
     if (!res.ok) {
       // throw forward whatever error backend throws
       const errorBody = await res.text();
@@ -53,7 +53,7 @@ export const GET = async () => {
 export const DELETE = async (request: Request) => {
   try {
     const { id } = await request.json();
-    const res = await fetch(`${process.env.BASE_URL}${api.accounts}${id}/`, {
+    const res = await fetch(`${process.env.BASE_URL}${api.crew}${id}/`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
