@@ -5,7 +5,6 @@ import { createCrewSchema, CreateCrewSchema } from "@/lib/schema";
 import { clientAPI } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCrewStore } from "@/store/crew-store";
-import { CreateCrewMember } from "@/types/global";
 
 const CreateCrewForm = () => {
   const { user } = useUserStore();
