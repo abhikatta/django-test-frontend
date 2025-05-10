@@ -1,5 +1,5 @@
 "use client";
-import { CrewMember } from "@/types/global";
+import { CreateCrewMember, CrewMember } from "@/types/global";
 import { clientAPI } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
 import useGetCrew from "@/hooks/use-get-crew";
@@ -24,8 +24,13 @@ import {
   DialogTrigger,
   DialogClose,
 } from "./ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "./ui/input";
+import { Switch } from "./ui/switch";
+import { createCrewSchema, CreateCrewSchema } from "@/lib/schema";
+import { useForm } from "react-hook-form";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
@@ -82,6 +87,117 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   );
 };
 
+const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
+  const [disabled, setDisabled] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    register,
+    reset,
+  } = useForm<CreateCrewSchema>({
+    resolver: zodResolver(createCrewSchema),
+    reValidateMode: "onChange",
+  });
+
+  useEffect(() => {
+    if (open) reset();
+  }, [open, item]);
+
+  const updateCrew = async (data: CreateCrewMember) => {
+    try {
+      setDisabled(true);
+      const res = await fetch(`${clientAPI.crew}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data,
+          id: item.id,
+        }),
+      });
+
+      if (res.ok) {
+        setOpen(false);
+      }
+
+      setDisabled(false);
+    } catch (error) {
+      console.error(error);
+      setDisabled(false);
+    }
+  };
+  console.log(item);
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant={"outline"} size={"icon"}>
+          <Edit3 />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Update crew member</DialogTitle>
+        </DialogHeader>
+        <form
+          className="flex flex-col gap-y-3"
+          onSubmit={handleSubmit(updateCrew)}>
+          <Input
+            defaultValue={item.first_name}
+            {...register("first_name")}
+            placeholder="First Name"></Input>
+          <Input
+            defaultValue={item.last_name}
+            {...register("last_name")}
+            placeholder="Last Name"></Input>
+          <Input
+            {...register("email")}
+            defaultValue={item.email}
+            placeholder="Email"
+            type="email"></Input>
+          <div className="flex flex-row items-center w-auto justify-between gap-x-2">
+            <Switch
+              defaultChecked={item.is_active}
+              {...register("is_active")}></Switch>
+            <label className="whitespace-nowrap">
+              Is the crew member currently active and ready to work?
+            </label>
+          </div>
+          <div className="flex flex-row items-center justify-between gap-x-2">
+            <Switch
+              defaultChecked={item.is_tasked}
+              {...register("is_tasked")}></Switch>
+            <label className="whitespace-nowrap">
+              Is the crew member already assigned a work?
+            </label>
+          </div>
+          <Input
+            {...register("hourly_wage")}
+            defaultValue={item.hourly_wage}
+            placeholder="Hourly Wage"
+            type="number"></Input>
+
+          {Object.entries(errors).map((item, index) => (
+            <p
+              key={index}
+              className="text-red-300 bg-red-50 px-1 py-0.5 dark:bg-red-950">
+              {item[1].message}
+            </p>
+          ))}
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button disabled={disabled}>Cancel</Button>
+            </DialogClose>
+            <Button disabled={disabled} type="submit">
+              {disabled && <Loader2 className="animate-spin" />} Update
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const CrewTable = () => {
   const { crew, crewMemberKeys } = useGetCrew();
   return (
@@ -118,9 +234,7 @@ const CrewTable = () => {
             <TableCell>{item.hourly_wage}</TableCell>
             <TableCell className="flex items-center justify-evenly">
               <DeleteCrewButton item={item} />
-              <Button variant={"outline"} size={"icon"}>
-                <Edit3 />
-              </Button>
+              <UpdateCrewButton item={item} />
             </TableCell>
           </TableRow>
         ))}

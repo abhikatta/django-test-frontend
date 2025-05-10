@@ -67,3 +67,30 @@ export const DELETE = async (request: Request) => {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };
+
+export const PATCH = async (request: Request) => {
+  try {
+    const { id, data } = await request.json();
+    const crewData = createCrewSchema.safeParse(data);
+    if (!crewData.success) {
+      return new NextResponse(
+        JSON.stringify({ errors: crewData.error.flatten().fieldErrors }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    const res = await fetch(`${process.env.BASE_URL}${api.crew}${id}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(crewData.data),
+    });
+    if (!res.ok) {
+      const errorBody = await res.text();
+      return new NextResponse(errorBody, { status: res.status });
+    }
+
+    return NextResponse.json(null, { status: 200 });
+  } catch (error) {
+    console.error("DELETE /api route error:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+};
