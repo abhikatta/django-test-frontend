@@ -4,4 +4,7 @@ import { UserState } from "./types";
 export const useUserStore = create<UserState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
+
+  //   TODO: think about this later if using refresh token
+  //   logoutUser: () => set({ user: null }),
 }));

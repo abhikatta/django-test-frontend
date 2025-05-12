@@ -106,7 +106,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const { updateCrewMember } = useCrewStore();
   const { roles } = useRolesStore();
   const form = useForm<CreateCrewSchema>({
-    // resolver: zodResolver(createCrewSchema),
+    resolver: zodResolver(createCrewSchema),
     defaultValues: {
       ...item,
     },
