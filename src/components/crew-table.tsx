@@ -98,6 +98,7 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
 const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const [disabled, setDisabled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { updateCrewMember } = useCrewStore();
 
   const form = useForm<CreateCrewSchema>({
     resolver: zodResolver(createCrewSchema),
@@ -120,6 +121,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
 
       if (res.ok) {
         setOpen(false);
+        updateCrewMember({ ...data, id: item.id });
       }
 
       setDisabled(false);
@@ -263,10 +265,12 @@ const CrewTable = () => {
             <TableCell>{item.last_name}</TableCell>
             <TableCell>{item.email}</TableCell>
             <TableCell>{item.is_active ? "Active" : "Inactive"}</TableCell>
-            <TableCell className="flex justify-around items-center">
+            <TableCell>
               <Badge
                 className={cn(
-                  item.is_tasked
+                  !item.is_active
+                    ? "bg-red-500 dark:bg-red-400 "
+                    : item.is_tasked
                     ? "bg-gray-500 dark:bg-gray-400"
                     : "bg-green-500 dark:bg-green-400"
                 )}>

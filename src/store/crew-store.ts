@@ -10,7 +10,12 @@ export const useCrewStore = create<CrewState>((set) => ({
       crew: [...state.crew, crewMember],
       crewCount: state.crewCount + 1,
     })),
-
+  updateCrewMember: (crewMember) =>
+    set((state) => ({
+      crew: state.crew.map((member) =>
+        member.id === crewMember.id ? { ...member, ...crewMember } : member
+      ),
+    })),
   removeCrewMember: (id) =>
     set((state) => ({
       crew: state.crew.filter((crewMember) => crewMember.id !== id),
