@@ -11,10 +11,9 @@ export interface CrewMember {
   email: string;
   is_active: boolean;
   is_tasked: boolean;
-  hourly_wage: number | string;
-  created_at: string;
-  updated_at?: string;
-  client_id: number; // Working for which client
+  hourly_wage: number;
+  //   created_at: string;
+  //   client_id: number; // Working for which client
 }
 
 export interface CreateCrewMember {
@@ -23,5 +22,5 @@ export interface CreateCrewMember {
   email: string;
   is_active: boolean;
   is_tasked: boolean;
-  hourly_wage: number | string;
+  hourly_wage: number;
 }

@@ -13,6 +13,14 @@ import {
 } from "./ui/table";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Edit3, Loader2, Trash2 } from "lucide-react";
 import {
   Dialog,
@@ -91,19 +99,12 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const [disabled, setDisabled] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const {
-    handleSubmit,
-    formState: { errors },
-    register,
-    reset,
-  } = useForm<CreateCrewSchema>({
+  const form = useForm<CreateCrewSchema>({
     resolver: zodResolver(createCrewSchema),
-    reValidateMode: "onChange",
+    defaultValues: {
+      ...item,
+    },
   });
-
-  useEffect(() => {
-    if (open) reset();
-  }, [open, item]);
 
   const updateCrew = async (data: CreateCrewMember) => {
     try {
@@ -139,60 +140,105 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
         <DialogHeader>
           <DialogTitle>Update crew member</DialogTitle>
         </DialogHeader>
-        <form
-          className="flex flex-col gap-y-3"
-          onSubmit={handleSubmit(updateCrew)}>
-          <Input
-            defaultValue={item.first_name}
-            {...register("first_name")}
-            placeholder="First Name"></Input>
-          <Input
-            defaultValue={item.last_name}
-            {...register("last_name")}
-            placeholder="Last Name"></Input>
-          <Input
-            {...register("email")}
-            defaultValue={item.email}
-            placeholder="Email"
-            type="email"></Input>
-          <div className="flex flex-row items-center w-auto justify-between gap-x-2">
-            <Switch
-              defaultChecked={item.is_active}
-              {...register("is_active")}></Switch>
-            <label className="whitespace-nowrap">
-              Is the crew member currently active and ready to work?
-            </label>
-          </div>
-          <div className="flex flex-row items-center justify-between gap-x-2">
-            <Switch
-              defaultChecked={item.is_tasked}
-              {...register("is_tasked")}></Switch>
-            <label className="whitespace-nowrap">
-              Is the crew member already assigned a work?
-            </label>
-          </div>
-          <Input
-            {...register("hourly_wage")}
-            defaultValue={item.hourly_wage}
-            placeholder="Hourly Wage"
-            type="number"></Input>
-
-          {Object.entries(errors).map((item, index) => (
-            <p
-              key={index}
-              className="text-red-300 bg-red-50 px-1 py-0.5 dark:bg-red-950">
-              {item[1].message}
-            </p>
-          ))}
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button disabled={disabled}>Cancel</Button>
-            </DialogClose>
-            <Button disabled={disabled} type="submit">
-              {disabled && <Loader2 className="animate-spin" />} Update
+        <Form {...form}>
+          <form
+            className="flex flex-col items-start justify-center mt-10 gap-y-3 gap-x-5 w-auto"
+            onSubmit={form.handleSubmit(updateCrew)}>
+            <FormField
+              control={form.control}
+              name="first_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="First Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="last_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Last Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Enter your email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex flex-row items-center w-auto justify-between gap-x-2">
+              <FormField
+                control={form.control}
+                name="is_active"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row-reverse items-center justify-between gap-x-2">
+                    <FormLabel>
+                      Is the crew member currently active and ready to work?
+                    </FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}></Switch>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-row items-center justify-between gap-x-2">
+              <FormField
+                control={form.control}
+                name="is_tasked"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row-reverse items-center justify-between gap-x-2">
+                    <FormLabel>
+                      Is the crew member already assigned a work?
+                    </FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}></Switch>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="hourly_wage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Enter Crew member&apos;s hourly wage</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="Hourly Wage" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button disabled={disabled} variant="default" type="submit">
+              Update
             </Button>
-          </DialogFooter>
-        </form>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

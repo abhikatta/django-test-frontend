@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const muslish = Mulish({
   variable: "--font-mulish",
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={` ${muslish.variable} antialiased`}>{children}</body>
+      <body className={` ${muslish.variable} antialiased`}>
+        <Toaster />
+        {children}
+      </body>
     </html>
   );
 }

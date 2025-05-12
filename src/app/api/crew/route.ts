@@ -24,12 +24,15 @@ export const POST = async (request: Request) => {
     });
     if (!res.ok) {
       const errorBody = await res.text();
-      return new Response(errorBody, { status: res.status });
+      return new NextResponse(JSON.stringify(errorBody), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
     const response = await res.json();
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.log(error);
+    return new NextResponse(JSON.stringify(error), { status: 400 });
   }
 };
 
