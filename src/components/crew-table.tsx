@@ -50,6 +50,7 @@ import { Switch } from "./ui/switch";
 import { createCrewSchema, CreateCrewSchema } from "@/lib/schema";
 import { useForm } from "react-hook-form";
 import { DeleteData, UpdateData } from "@/lib/db-utils";
+import { Skeleton } from "./ui/skeleton";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
@@ -105,7 +106,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const { updateCrewMember } = useCrewStore();
   const { roles } = useRolesStore();
   const form = useForm<CreateCrewSchema>({
-    resolver: zodResolver(createCrewSchema),
+    // resolver: zodResolver(createCrewSchema),
     defaultValues: {
       ...item,
     },
@@ -274,8 +275,10 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
 };
 
 const CrewTable = () => {
-  const { crew, crewMemberKeys } = useGetCrew();
-  return (
+  const { crew, isLoading, isError, crewMemberKeys } = useGetCrew();
+  return isLoading ? (
+    <Skeleton className="h-15 w-full" />
+  ) : (
     <Table>
       <TableHeader>
         <TableRow>
@@ -285,40 +288,64 @@ const CrewTable = () => {
           <TableHead>Settings</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
-        {crew.map((item) => (
-          <TableRow key={item.id}>
-            <TableCell>{item.first_name}</TableCell>
-            <TableCell>{item.last_name}</TableCell>
-            <TableCell>{item.email}</TableCell>
-            <TableCell>
-              {item.role.charAt(0).toLocaleUpperCase() + item.role.slice(1)}
-            </TableCell>
-            <TableCell>{item.is_active ? "Active" : "Inactive"}</TableCell>
-            <TableCell>
-              <Badge
-                className={cn(
-                  !item.is_active
-                    ? "bg-red-500 dark:bg-red-400 "
-                    : item.is_tasked
-                    ? "bg-gray-500 dark:bg-gray-400"
-                    : "bg-green-500 dark:bg-green-400"
-                )}>
-                {!item.is_active
-                  ? "Removed"
-                  : item.is_tasked
-                  ? "Working"
-                  : "Available"}
-              </Badge>
-            </TableCell>
-            <TableCell>{item.hourly_wage}</TableCell>
-            <TableCell className="flex items-center justify-evenly">
-              <DeleteCrewButton item={item} />
-              <UpdateCrewButton item={item} />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
+      {isError ? (
+        <TableRow>
+          <TableCell
+            className="border-none"
+            colSpan={crewMemberKeys.length + 1}>
+            <p className="w-full h-20 flex justify-center items-center text-center ">
+              Something went wrong! Please check your internet connection.
+            </p>
+          </TableCell>
+        </TableRow>
+      ) : (
+        <TableBody>
+          {crew.length > 0 ? (
+            crew.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.first_name}</TableCell>
+                <TableCell>{item.last_name}</TableCell>
+                <TableCell>{item.email}</TableCell>
+                <TableCell>
+                  {item.role.charAt(0).toLocaleUpperCase() + item.role.slice(1)}
+                </TableCell>
+                <TableCell>{item.is_active ? "Active" : "Inactive"}</TableCell>
+                <TableCell>
+                  <Badge
+                    className={cn(
+                      !item.is_active
+                        ? "bg-red-500 dark:bg-red-400 "
+                        : item.is_tasked
+                        ? "bg-gray-500 dark:bg-gray-400"
+                        : "bg-green-500 dark:bg-green-400"
+                    )}>
+                    {!item.is_active
+                      ? "Removed"
+                      : item.is_tasked
+                      ? "Working"
+                      : "Available"}
+                  </Badge>
+                </TableCell>
+                <TableCell>{item.hourly_wage}</TableCell>
+                <TableCell className="flex items-center justify-evenly">
+                  <DeleteCrewButton item={item} />
+                  <UpdateCrewButton item={item} />
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                className="border-none"
+                colSpan={crewMemberKeys.length + 1}>
+                <p className="w-full h-20 flex justify-center items-center text-center ">
+                  No Data Found.
+                </p>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      )}
     </Table>
   );
 };
