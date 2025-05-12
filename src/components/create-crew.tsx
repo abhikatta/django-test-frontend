@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "./ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { PostData } from "@/lib/db-utils";
 
 const CreateCrewForm = () => {
   const { addCrewMember } = useCrewStore();
@@ -32,25 +32,9 @@ const CreateCrewForm = () => {
   });
 
   const onSubmit = async (data: CreateCrewSchema) => {
-    try {
-      console.log(data);
-      const res = await fetch(clientAPI.crew, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        const crewData = await res.json();
-        console.log(crewData);
-        addCrewMember(crewData);
-        form.reset();
-      } else {
-        const errorBody = await res.json();
-
-        console.log(errorBody.errors.email[0]);
-      }
-    } catch (error) {
-      console.log("errro:", error);
+    const crewData = await PostData({ url: clientAPI.crew, body: data });
+    if (crewData) {
+      addCrewMember(crewData);
     }
   };
 

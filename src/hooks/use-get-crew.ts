@@ -1,5 +1,6 @@
 "use client";
 import { clientAPI } from "@/lib/constants";
+import { GetData } from "@/lib/db-utils";
 import { useCrewStore } from "@/store/crew-store";
 import { useEffect } from "react";
 
@@ -15,14 +16,9 @@ const useGetCrew = () => {
     "Hourly Wage",
   ];
   const getCrew = async () => {
-    try {
-      const res = await fetch(clientAPI.crew);
-      const data = await res.json();
-      if (data) {
-        setCrew(data);
-      }
-    } catch (error) {
-      console.error(error);
+    const data = await GetData({ url: clientAPI.crew });
+    if (data) {
+      setCrew(data);
     }
   };
 

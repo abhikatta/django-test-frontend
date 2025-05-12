@@ -32,37 +32,31 @@ import {
   DialogTrigger,
   DialogClose,
 } from "./ui/dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Badge } from "./ui/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import { Switch } from "./ui/switch";
 import { createCrewSchema, CreateCrewSchema } from "@/lib/schema";
 import { useForm } from "react-hook-form";
+import { DeleteData, UpdateData } from "@/lib/db-utils";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
   const [disabled, setDisabled] = useState(false);
 
   const deleteCrew = async (id: number) => {
-    try {
-      setDisabled(true);
-      const res = await fetch(clientAPI.crew, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id,
-        }),
-      });
-      if (res.ok) {
-        removeCrewMember(item.id);
-      }
-      setDisabled(false);
-    } catch (error) {
-      console.error(error);
-      setDisabled(false);
-    }
+    setDisabled(true);
+    DeleteData({
+      url: clientAPI.crew,
+      body: {
+        id,
+      },
+      onSuccess: () => removeCrewMember(item.id),
+    });
+    setDisabled(false);
   };
+
   const fullName = `${item.first_name} ${item.last_name}`;
   return (
     <Dialog>
@@ -108,29 +102,22 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   });
 
   const updateCrew = async (data: CreateCrewMember) => {
-    try {
-      setDisabled(true);
-      const res = await fetch(`${clientAPI.crew}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          data,
-          id: item.id,
-        }),
-      });
+    setDisabled(true);
 
-      if (res.ok) {
+    await UpdateData({
+      url: clientAPI.crew,
+      body: {
+        data,
+        id: item.id,
+      },
+      onSuccess: () => {
         setOpen(false);
         updateCrewMember({ ...data, id: item.id });
-      }
+      },
+    });
 
-      setDisabled(false);
-    } catch (error) {
-      console.error(error);
-      setDisabled(false);
-    }
+    setDisabled(false);
   };
-  console.log(item);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
