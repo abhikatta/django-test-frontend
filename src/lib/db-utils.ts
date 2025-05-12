@@ -18,10 +18,11 @@ interface UpdateProps extends Props {
   METHOD?: METHOD.PUT | METHOD.PATCH;
 }
 
-const RaiseErrorToast = (error: unknown) => {
-  toast("Something Went Wrong!", {
-    className: "bg-red-300 text-red-800",
-    description: JSON.stringify(error),
+const RaiseErrorToast = (error: string) => {
+  return toast.error("Something Went Wrong!", {
+    className:
+      "!bg-red-400 !text-white dark:!bg-red-400 !border-none dark:!text-black",
+    description: error,
   });
 };
 
@@ -36,9 +37,10 @@ export const GetData = async (props: Props) => {
       props.onSuccess ? props.onSuccess() : null;
       return data;
     }
+    RaiseErrorToast("Error");
     return null;
   } catch (error) {
-    RaiseErrorToast(error);
+    RaiseErrorToast(JSON.stringify(error));
   }
 };
 
@@ -54,9 +56,10 @@ export const PostData = async (props: Props) => {
       props.onSuccess ? props.onSuccess() : null;
       return data;
     }
+    RaiseErrorToast("Error");
     return null;
   } catch (error) {
-    RaiseErrorToast(error);
+    RaiseErrorToast(JSON.stringify(error));
   }
 };
 
@@ -72,10 +75,11 @@ export const UpdateData = async (props: UpdateProps) => {
       props.onSuccess ? props.onSuccess() : null;
       return data;
     } else {
+      RaiseErrorToast("Error");
       return null;
     }
   } catch (error) {
-    RaiseErrorToast(error);
+    RaiseErrorToast(JSON.stringify(error));
   }
 };
 
@@ -91,8 +95,8 @@ export const DeleteData = async (props: Props) => {
       props.onSuccess ? props.onSuccess() : null;
       return data;
     }
-    return null;
+    RaiseErrorToast("Error");
   } catch (error) {
-    RaiseErrorToast(error);
+    RaiseErrorToast(JSON.stringify(error));
   }
 };

@@ -2,7 +2,9 @@
 import { CreateCrewMember, CrewMember } from "@/types/global";
 import { clientAPI } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
+import { useRolesStore } from "@/store/roles-store";
 import useGetCrew from "@/hooks/use-get-crew";
+
 import {
   Table,
   TableBody,
@@ -21,6 +23,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Edit3, Loader2, Trash2 } from "lucide-react";
 import {
   Dialog,
@@ -93,7 +103,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const [disabled, setDisabled] = useState(false);
   const [open, setOpen] = useState(false);
   const { updateCrewMember } = useCrewStore();
-
+  const { roles } = useRolesStore();
   const form = useForm<CreateCrewSchema>({
     resolver: zodResolver(createCrewSchema),
     defaultValues: {
@@ -172,6 +182,36 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Enter email</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select a Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {roles.map((role, index) => (
+                            <SelectItem key={index} value={role.value}>
+                              {role.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="flex flex-row items-center w-auto justify-between gap-x-2">
               <FormField
                 control={form.control}
@@ -251,6 +291,9 @@ const CrewTable = () => {
             <TableCell>{item.first_name}</TableCell>
             <TableCell>{item.last_name}</TableCell>
             <TableCell>{item.email}</TableCell>
+            <TableCell>
+              {item.role.charAt(0).toLocaleUpperCase() + item.role.slice(1)}
+            </TableCell>
             <TableCell>{item.is_active ? "Active" : "Inactive"}</TableCell>
             <TableCell>
               <Badge

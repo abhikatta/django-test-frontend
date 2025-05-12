@@ -2,4 +2,5 @@
 
 export const api = {
   crew: "/api/crew/",
+  roles: "/api/roles/",
 };

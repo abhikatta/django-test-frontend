@@ -11,6 +11,7 @@ const useGetCrew = () => {
     "First Name",
     "Last Name",
     "Email",
+    "Role",
     "Active Status",
     "Task Status",
     "Hourly Wage",

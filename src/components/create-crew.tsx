@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { createCrewSchema, CreateCrewSchema } from "@/lib/schema";
 import { clientAPI } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,11 +15,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "./ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PostData } from "@/lib/db-utils";
+import useGetRoles from "@/hooks/use-get-roles";
 
 const CreateCrewForm = () => {
   const { addCrewMember } = useCrewStore();
+  const { roles } = useGetRoles();
   const form = useForm<CreateCrewSchema>({
     resolver: zodResolver(createCrewSchema),
     defaultValues: {
@@ -27,6 +38,7 @@ const CreateCrewForm = () => {
       email: "",
       is_active: true,
       is_tasked: false,
+      role: "",
       hourly_wage: 0,
     },
   });
@@ -48,7 +60,7 @@ const CreateCrewForm = () => {
           name="first_name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>First Name</FormLabel>
               <FormControl>
                 <Input placeholder="First Name" {...field} />
               </FormControl>
@@ -74,7 +86,7 @@ const CreateCrewForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Enter your email</FormLabel>
+              <FormLabel>Enter email</FormLabel>
               <FormControl>
                 <Input placeholder="Email" {...field} />
               </FormControl>
@@ -82,6 +94,36 @@ const CreateCrewForm = () => {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Select Role</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {roles.map((role, index) => (
+                        <SelectItem key={index} value={role.value}>
+                          {role.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="flex flex-row items-center w-auto justify-between gap-x-2">
           <FormField
             control={form.control}

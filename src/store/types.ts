@@ -1,4 +1,4 @@
-import { CrewMember, User } from "@/types/global";
+import { CrewMember, Role, User } from "@/types/global";
 
 export interface UserState {
   user: User | null;
@@ -12,4 +12,9 @@ export interface CrewState {
   addCrewMember: (crewMember: CrewMember) => void;
   updateCrewMember: (crewMemberId: CrewMember) => void;
   removeCrewMember: (id: number) => void;
+}
+
+export interface RolesState {
+  roles: Role[] | [];
+  setRoles: (roles: Role[]) => void;
 }
