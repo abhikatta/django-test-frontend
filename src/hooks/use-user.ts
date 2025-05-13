@@ -12,7 +12,7 @@ const useUser = () => {
   const signup = () => {};
   const login = () => {};
 
-  return { logoutUser };
+  return { user, logoutUser };
 };
 
 export default useUser;

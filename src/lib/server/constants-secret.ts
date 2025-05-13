@@ -3,4 +3,9 @@
 export const api = {
   crew: "/api/crew/",
   roles: "/api/roles/",
+  accounts: {
+    signup: "/api/accounts/signup/",
+    login: "/api/accounts/login/",
+    refresh_token: "/api/token/refresh/",
+  },
 };

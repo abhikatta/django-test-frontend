@@ -47,7 +47,7 @@ import { Badge } from "./ui/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import { Switch } from "./ui/switch";
-import { createCrewSchema, CreateCrewSchema } from "@/lib/schema";
+import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schema";
 import { useForm } from "react-hook-form";
 import { DeleteData, UpdateData } from "@/lib/db-utils";
 import { Skeleton } from "./ui/skeleton";
@@ -105,7 +105,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const [open, setOpen] = useState(false);
   const { updateCrewMember } = useCrewStore();
   const { roles } = useRolesStore();
-  const form = useForm<CreateCrewSchema>({
+  const form = useForm<CreateCrewSchemaType>({
     resolver: zodResolver(createCrewSchema),
     defaultValues: {
       ...item,

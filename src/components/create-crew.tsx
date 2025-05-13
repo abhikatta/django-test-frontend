@@ -1,6 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { createCrewSchema, CreateCrewSchema } from "@/lib/schema";
+import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schema";
 import { clientAPI } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
 
@@ -30,7 +30,7 @@ import useGetRoles from "@/hooks/use-get-roles";
 const CreateCrewForm = () => {
   const { addCrewMember } = useCrewStore();
   const { roles } = useGetRoles();
-  const form = useForm<CreateCrewSchema>({
+  const form = useForm<CreateCrewSchemaType>({
     resolver: zodResolver(createCrewSchema),
     defaultValues: {
       first_name: "",
@@ -43,7 +43,7 @@ const CreateCrewForm = () => {
     },
   });
 
-  const onSubmit = async (data: CreateCrewSchema) => {
+  const onSubmit = async (data: CreateCrewSchemaType) => {
     const crewData = await PostData({ url: clientAPI.crew, body: data });
     if (crewData) {
       addCrewMember(crewData);
