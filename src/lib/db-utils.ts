@@ -37,7 +37,7 @@ export const GetData = async (props: Props) => {
       props.onSuccess ? props.onSuccess() : null;
       return data;
     }
-    RaiseErrorToast("Error");
+    RaiseErrorToast("Something went wrong");
     return null;
   } catch (error) {
     RaiseErrorToast(JSON.stringify(error));
@@ -56,7 +56,7 @@ export const PostData = async (props: Props) => {
       props.onSuccess ? props.onSuccess() : null;
       return data;
     }
-    RaiseErrorToast("Error");
+    RaiseErrorToast("Something went wrong");
     return null;
   } catch (error) {
     RaiseErrorToast(JSON.stringify(error));
@@ -75,7 +75,7 @@ export const UpdateData = async (props: UpdateProps) => {
       props.onSuccess ? props.onSuccess() : null;
       return data;
     } else {
-      RaiseErrorToast("Error");
+      RaiseErrorToast("Something went wrong");
       return null;
     }
   } catch (error) {
@@ -95,7 +95,7 @@ export const DeleteData = async (props: Props) => {
       props.onSuccess ? props.onSuccess() : null;
       return data;
     }
-    RaiseErrorToast("Error");
+    RaiseErrorToast("Something went wrong");
   } catch (error) {
     RaiseErrorToast(JSON.stringify(error));
   }

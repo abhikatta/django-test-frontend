@@ -16,7 +16,7 @@ import { Button } from "./ui/button";
 
 interface FormProps<T extends ZodSchema> {
   schema: T;
-  onSubmit: () => void;
+  onSubmit: (data: z.infer<T>) => void;
   defaultValues: z.infer<T>;
   fields: {
     name: keyof z.infer<T>;
@@ -32,7 +32,7 @@ const CustomForm = <T extends ZodSchema>({
   onSubmit,
 }: FormProps<T>) => {
   const form = useForm<z.infer<typeof schema>>({
-    // resolver: zodResolver(schema),
+    resolver: zodResolver(schema),
     defaultValues,
   });
   return (
@@ -50,11 +50,7 @@ const CustomForm = <T extends ZodSchema>({
                 <FormItem>
                   <FormLabel>{inputField.label}</FormLabel>
                   <FormControl>
-                    <Input
-                      type={inputField.type || "text"}
-                      placeholder={inputField.label}
-                      {...field}
-                    />
+                    <Input {...field} placeholder={inputField.label} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

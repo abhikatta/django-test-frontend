@@ -2,7 +2,9 @@
 import { motion } from "motion/react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import CustomForm from "./auth-forms";
-import { loginSchema, signupSchema } from "@/lib/schema";
+import { loginSchema, LoginSchemaType, signupSchema } from "@/lib/schema";
+import { PostData } from "@/lib/db-utils";
+import { clientAPI } from "@/lib/constants";
 
 interface PillPosition {
   left: number;
@@ -85,7 +87,7 @@ const Authentication = () => {
           <motion.div
             id="underline"
             animate={{ ...position }}
-            className="border absolute border-b-2 bg-accent -z-10"
+            className="border absolute rounded-full border-b-2 bg-accent -z-10"
           />
         </div>
         <div>
@@ -93,11 +95,13 @@ const Authentication = () => {
             <div id="login-tab">
               <CustomForm
                 schema={loginSchema}
-                onSubmit={() => {}}
-                defaultValues={{ email: "", password: "" }}
+                onSubmit={async (data) => {
+                  await PostData({ url: clientAPI.accounts.login, body: data });
+                }}
+                defaultValues={{ username: "", password: "" }}
                 fields={[
                   {
-                    name: "email",
+                    name: "username",
                     label: "Email",
                     type: "email",
                   },
@@ -113,7 +117,12 @@ const Authentication = () => {
             <div id="signup-tab">
               <CustomForm
                 schema={signupSchema}
-                onSubmit={() => {}}
+                onSubmit={async (data) => {
+                  await PostData({
+                    url: clientAPI.accounts.signup,
+                    body: data,
+                  });
+                }}
                 defaultValues={{
                   first_name: "",
                   last_name: "",

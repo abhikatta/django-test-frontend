@@ -47,7 +47,7 @@ export const signupSchema = z
       .string()
       .min(8, "Password must have atleast 8 characters"),
   })
-  .refine(({ password, confirm_password }) => password === confirm_password, {
+  .refine(({ password, confirm_password }) => password !== confirm_password, {
     message: "Passwords do not match",
   })
   .refine(
@@ -60,7 +60,7 @@ export const signupSchema = z
 export type SignupSchemaType = z.infer<typeof signupSchema>;
 
 export const loginSchema = z.object({
-  email: z
+  username: z
     .string()
     .email("Invalid Email address")
     .nonempty("Email is required!"),
