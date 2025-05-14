@@ -1,46 +1,44 @@
+"use client";
+import {
+  DjangoErrorResponseObject,
+  METHOD,
+  Props,
+  UpdateProps,
+} from "@/types/global";
 import { toast } from "sonner";
-
-const enum METHOD {
-  GET = "GET",
-  POST = "POST",
-  PATCH = "PATCH",
-  PUT = "PUT",
-  DELETE = "DELETE",
-}
-
-interface Props<T = any> {
-  url: string;
-  body?: T;
-  onSuccess?: () => void;
-}
-
-interface UpdateProps extends Props {
-  METHOD?: METHOD.PUT | METHOD.PATCH;
-}
+import { parseErrorMessage, toastErrorMessage } from "./utils";
+import { useUserStore } from "@/store/user-store";
 
 const RaiseErrorToast = (error: string) => {
-  return toast.error("Something Went Wrong!", {
+  return toast.error("Error!", {
     className:
       "!bg-red-400 !text-white dark:!bg-red-400 !border-none dark:!text-black",
     description: error,
   });
 };
 
+const getHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${useUserStore.getState().user?.access ?? ""}`,
+});
+
+// TODO:
+const { logoutUser } = useUserStore.getState();
+
 export const GetData = async (props: Props) => {
   try {
     const res = await fetch(props.url, {
       method: METHOD.GET,
-      headers: { "Content-Type": "application/json" },
+      headers: getHeaders(),
     });
     if (res.ok) {
-      const data = await res.json();
-      props.onSuccess ? props.onSuccess() : null;
-      return data;
+      return await res.json();
+    } else {
+      const error: DjangoErrorResponseObject = await res.json();
+      throw new Error(parseErrorMessage(error));
     }
-    RaiseErrorToast("Something went wrong");
-    return null;
-  } catch (error) {
-    RaiseErrorToast(JSON.stringify(error));
+  } catch (error: unknown) {
+    RaiseErrorToast(toastErrorMessage(error));
   }
 };
 
@@ -48,18 +46,17 @@ export const PostData = async (props: Props) => {
   try {
     const res = await fetch(props.url, {
       method: METHOD.POST,
-      headers: { "Content-Type": "application/json" },
+      headers: getHeaders(),
       body: JSON.stringify(props.body),
     });
     if (res.ok) {
-      const data = await res.json();
-      props.onSuccess ? props.onSuccess() : null;
-      return data;
+      return await res.json();
+    } else {
+      const error: DjangoErrorResponseObject = await res.json();
+      throw new Error(parseErrorMessage(error));
     }
-    RaiseErrorToast("Something went wrong");
-    return null;
-  } catch (error) {
-    RaiseErrorToast(JSON.stringify(error));
+  } catch (error: unknown) {
+    RaiseErrorToast(toastErrorMessage(error));
   }
 };
 
@@ -67,19 +64,17 @@ export const UpdateData = async (props: UpdateProps) => {
   try {
     const res = await fetch(props.url, {
       method: props.METHOD || METHOD.PATCH,
-      headers: { "Content-Type": "application/json" },
+      headers: getHeaders(),
       body: JSON.stringify(props.body),
     });
     if (res.ok) {
-      const data = await res.json();
-      props.onSuccess ? props.onSuccess() : null;
-      return data;
+      return await res.json();
     } else {
-      RaiseErrorToast("Something went wrong");
-      return null;
+      const error: DjangoErrorResponseObject = await res.json();
+      throw new Error(parseErrorMessage(error));
     }
-  } catch (error) {
-    RaiseErrorToast(JSON.stringify(error));
+  } catch (error: unknown) {
+    RaiseErrorToast(toastErrorMessage(error));
   }
 };
 
@@ -87,16 +82,16 @@ export const DeleteData = async (props: Props) => {
   try {
     const res = await fetch(props.url, {
       method: METHOD.DELETE,
-      headers: { "Content-Type": "application/json" },
+      headers: getHeaders(),
       body: JSON.stringify(props.body),
     });
     if (res.ok) {
-      const data = await res.json();
-      props.onSuccess ? props.onSuccess() : null;
-      return data;
+      return await res.json();
+    } else {
+      const error: DjangoErrorResponseObject = await res.json();
+      throw new Error(parseErrorMessage(error));
     }
-    RaiseErrorToast("Something went wrong");
-  } catch (error) {
-    RaiseErrorToast(JSON.stringify(error));
+  } catch (error: unknown) {
+    RaiseErrorToast(toastErrorMessage(error));
   }
 };

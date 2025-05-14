@@ -1,23 +1,12 @@
 "use client";
 import { motion } from "motion/react";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CustomForm from "./auth-forms";
-import { loginSchema, LoginSchemaType, signupSchema } from "@/lib/schema";
+import { loginSchema, signupSchema } from "@/lib/schema";
 import { PostData } from "@/lib/db-utils";
 import { clientAPI } from "@/lib/constants";
-
-interface PillPosition {
-  left: number;
-  width: number;
-  height: number;
-}
-
-interface ButtonProps {
-  name: string;
-  label: string;
-  onClick: () => void;
-  setPillPosition: Dispatch<SetStateAction<PillPosition>>;
-}
+import { ButtonProps, PillPosition } from "@/types/auth-form";
+import useUser from "@/hooks/use-user";
 
 const Button = ({ name, label, onClick, setPillPosition }: ButtonProps) => {
   const ref = useRef<HTMLButtonElement | null>(null);
@@ -44,6 +33,7 @@ const Button = ({ name, label, onClick, setPillPosition }: ButtonProps) => {
 };
 
 const Authentication = () => {
+  const { setUser } = useUser();
   const [openTab, setOpenTab] = useState<"login" | "signup">("login");
   const [position, setPosition] = useState<PillPosition>({
     left: 0,
@@ -96,7 +86,13 @@ const Authentication = () => {
               <CustomForm
                 schema={loginSchema}
                 onSubmit={async (data) => {
-                  await PostData({ url: clientAPI.accounts.login, body: data });
+                  const userData = await PostData({
+                    url: clientAPI.accounts.login,
+                    body: data,
+                  });
+                  if (userData) {
+                    setUser(userData);
+                  }
                 }}
                 defaultValues={{ username: "", password: "" }}
                 fields={[
@@ -118,10 +114,14 @@ const Authentication = () => {
               <CustomForm
                 schema={signupSchema}
                 onSubmit={async (data) => {
-                  await PostData({
+                  console.log("data", data);
+                  const userData = await PostData({
                     url: clientAPI.accounts.signup,
                     body: data,
                   });
+                  if (userData) {
+                    setUser(userData);
+                  }
                 }}
                 defaultValues={{
                   first_name: "",

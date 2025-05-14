@@ -58,13 +58,15 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
 
   const deleteCrew = async (id: number) => {
     setDisabled(true);
-    DeleteData({
+    const res = await DeleteData({
       url: clientAPI.crew,
       body: {
         id,
       },
-      onSuccess: () => removeCrewMember(item.id),
     });
+    if (res) {
+      removeCrewMember(item.id);
+    }
     setDisabled(false);
   };
 
@@ -115,18 +117,17 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const updateCrew = async (data: CreateCrewMember) => {
     setDisabled(true);
 
-    await UpdateData({
+    const res = await UpdateData({
       url: clientAPI.crew,
       body: {
         data,
         id: item.id,
       },
-      onSuccess: () => {
-        setOpen(false);
-        updateCrewMember({ ...data, id: item.id });
-      },
     });
-
+    if (res) {
+      updateCrewMember({ ...data, id: item.id });
+    }
+    setOpen(false);
     setDisabled(false);
   };
   return (
