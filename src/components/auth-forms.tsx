@@ -50,7 +50,12 @@ const CustomForm = <T extends ZodSchema>({
                 <FormItem>
                   <FormLabel>{inputField.label}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={inputField.label} />
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder={inputField.label}
+                      type={inputField.type}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

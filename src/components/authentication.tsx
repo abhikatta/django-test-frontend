@@ -2,7 +2,7 @@
 import { motion } from "motion/react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import CustomForm from "./auth-forms";
-import { loginSchema, LoginSchemaType, signupSchema } from "@/lib/schema";
+import { loginSchema, signupSchema } from "@/lib/schema";
 import { PostData } from "@/lib/db-utils";
 import { clientAPI } from "@/lib/constants";
 
@@ -118,6 +118,7 @@ const Authentication = () => {
               <CustomForm
                 schema={signupSchema}
                 onSubmit={async (data) => {
+                  console.log("data", data);
                   await PostData({
                     url: clientAPI.accounts.signup,
                     body: data,
