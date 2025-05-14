@@ -1,25 +1,15 @@
+import {
+  DjangoErrorResponseObject,
+  METHOD,
+  Props,
+  UpdateProps,
+} from "@/types/global";
 import { toast } from "sonner";
-
-const enum METHOD {
-  GET = "GET",
-  POST = "POST",
-  PATCH = "PATCH",
-  PUT = "PUT",
-  DELETE = "DELETE",
-}
-
-interface Props<T = any> {
-  url: string;
-  body?: T;
-  onSuccess?: () => void;
-}
-
-interface UpdateProps extends Props {
-  METHOD?: METHOD.PUT | METHOD.PATCH;
-}
+import { parseErrorMessage, toastErrorMessage } from "./utils";
 
 const RaiseErrorToast = (error: string) => {
-  return toast.error("Something Went Wrong!", {
+  console.log("error message received:", error);
+  return toast.error("Error!", {
     className:
       "!bg-red-400 !text-white dark:!bg-red-400 !border-none dark:!text-black",
     description: error,
@@ -34,13 +24,13 @@ export const GetData = async (props: Props) => {
     });
     if (res.ok) {
       const data = await res.json();
-      props.onSuccess ? props.onSuccess() : null;
       return data;
+    } else {
+      const error: DjangoErrorResponseObject = await res.json();
+      throw new Error(parseErrorMessage(error));
     }
-    RaiseErrorToast("Something went wrong");
-    return null;
-  } catch (error) {
-    RaiseErrorToast(JSON.stringify(error));
+  } catch (error: unknown) {
+    RaiseErrorToast(toastErrorMessage(error));
   }
 };
 
@@ -53,13 +43,13 @@ export const PostData = async (props: Props) => {
     });
     if (res.ok) {
       const data = await res.json();
-      props.onSuccess ? props.onSuccess() : null;
       return data;
+    } else {
+      const error: DjangoErrorResponseObject = await res.json();
+      throw new Error(parseErrorMessage(error));
     }
-    RaiseErrorToast("Something went wrong");
-    return null;
-  } catch (error) {
-    RaiseErrorToast(JSON.stringify(error));
+  } catch (error: unknown) {
+    RaiseErrorToast(toastErrorMessage(error));
   }
 };
 
@@ -72,14 +62,13 @@ export const UpdateData = async (props: UpdateProps) => {
     });
     if (res.ok) {
       const data = await res.json();
-      props.onSuccess ? props.onSuccess() : null;
       return data;
     } else {
-      RaiseErrorToast("Something went wrong");
-      return null;
+      const error: DjangoErrorResponseObject = await res.json();
+      throw new Error(parseErrorMessage(error));
     }
-  } catch (error) {
-    RaiseErrorToast(JSON.stringify(error));
+  } catch (error: unknown) {
+    RaiseErrorToast(toastErrorMessage(error));
   }
 };
 
@@ -92,11 +81,9 @@ export const DeleteData = async (props: Props) => {
     });
     if (res.ok) {
       const data = await res.json();
-      props.onSuccess ? props.onSuccess() : null;
       return data;
     }
-    RaiseErrorToast("Something went wrong");
-  } catch (error) {
-    RaiseErrorToast(JSON.stringify(error));
+  } catch (error: unknown) {
+    RaiseErrorToast(toastErrorMessage(error));
   }
 };
