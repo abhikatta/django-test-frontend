@@ -3,8 +3,6 @@ import { CrewMember, Role, User } from "@/types/global";
 export interface UserState {
   user: User | null;
   setUser: (user: User) => void;
-
-  //   TODO: think about this later if using refresh token
   logoutUser: () => void;
 }
 

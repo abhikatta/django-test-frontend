@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import CustomForm from "./auth-forms";
 import { loginSchema, signupSchema } from "@/lib/schema";
 import { PostData } from "@/lib/db-utils";
-import { clientAPI } from "@/lib/constants";
+import { apiRoutes } from "@/lib/constants";
 import { ButtonProps, PillPosition } from "@/types/auth-form";
 import useUser from "@/hooks/use-user";
 
@@ -87,7 +87,7 @@ const Authentication = () => {
                 schema={loginSchema}
                 onSubmit={async (data) => {
                   const userData = await PostData({
-                    url: clientAPI.accounts.login,
+                    url: apiRoutes.accounts.login,
                     body: data,
                   });
                   if (userData) {
@@ -116,7 +116,7 @@ const Authentication = () => {
                 onSubmit={async (data) => {
                   console.log("data", data);
                   const userData = await PostData({
-                    url: clientAPI.accounts.signup,
+                    url: apiRoutes.accounts.signup,
                     body: data,
                   });
                   if (userData) {

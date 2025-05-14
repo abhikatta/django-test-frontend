@@ -1,13 +1,16 @@
 "use client";
 import {
   DjangoErrorResponseObject,
+  HandleAPICallProps,
   METHOD,
   Props,
   UpdateProps,
+  User,
 } from "@/types/global";
 import { toast } from "sonner";
 import { parseErrorMessage, toastErrorMessage } from "./utils";
 import { useUserStore } from "@/store/user-store";
+import { apiRoutes } from "./constants";
 
 const RaiseErrorToast = (error: string) => {
   return toast.error("Error!", {
@@ -17,22 +20,62 @@ const RaiseErrorToast = (error: string) => {
   });
 };
 
-const getHeaders = () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${useUserStore.getState().user?.access ?? ""}`,
-});
+export const refreshToken = async ({
+  extraHeaders,
+  url,
+  method,
+  body,
+}: HandleAPICallProps) => {
+  // if not already recalled the api
+  if (extraHeaders && !extraHeaders["recalled"]) {
+    const tokenRes = await PostData({
+      url: apiRoutes.accounts.getAccessToken,
+      body: { refresh: useUserStore.getState().user?.refresh },
+      extraHeaders: { recalled: "true" },
+    });
+    // if successfully got the refresh token, update in state
+    if (tokenRes) {
+      const tokenData = tokenRes as Partial<User>;
+      useUserStore.getState().setUser({
+        ...useUserStore.getState().user!,
+        access: tokenData.access!,
+      });
+      // call the original api again
+      return await handleAPICall({
+        url,
+        method,
+        body,
+        extraHeaders: { ...(extraHeaders || {}), recalled: "true" },
+      });
+    }
+    // if all failed, logout user and toast error
+  } else {
+    useUserStore.getState().logoutUser();
+    throw new Error(parseErrorMessage({ detail: "Session has expired!" }));
+  }
+};
 
-// TODO:
-const { logoutUser } = useUserStore.getState();
-
-export const GetData = async (props: Props) => {
+const handleAPICall = async ({
+  url,
+  method,
+  body,
+  extraHeaders,
+}: HandleAPICallProps): Promise<unknown> => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${useUserStore.getState().user?.access ?? ""}`,
+    ...extraHeaders,
+  };
   try {
-    const res = await fetch(props.url, {
-      method: METHOD.GET,
-      headers: getHeaders(),
+    const res = await fetch(url, {
+      method,
+      headers,
+      ...(body ? { body: JSON.stringify(body) } : {}),
     });
     if (res.ok) {
       return await res.json();
+    } else if (res.status === 401) {
+      return await refreshToken({ extraHeaders, url, body, method });
     } else {
       const error: DjangoErrorResponseObject = await res.json();
       throw new Error(parseErrorMessage(error));
@@ -42,56 +85,14 @@ export const GetData = async (props: Props) => {
   }
 };
 
-export const PostData = async (props: Props) => {
-  try {
-    const res = await fetch(props.url, {
-      method: METHOD.POST,
-      headers: getHeaders(),
-      body: JSON.stringify(props.body),
-    });
-    if (res.ok) {
-      return await res.json();
-    } else {
-      const error: DjangoErrorResponseObject = await res.json();
-      throw new Error(parseErrorMessage(error));
-    }
-  } catch (error: unknown) {
-    RaiseErrorToast(toastErrorMessage(error));
-  }
-};
+export const GetData = async (props: Props) =>
+  await handleAPICall({ ...props, method: METHOD.GET });
 
-export const UpdateData = async (props: UpdateProps) => {
-  try {
-    const res = await fetch(props.url, {
-      method: props.METHOD || METHOD.PATCH,
-      headers: getHeaders(),
-      body: JSON.stringify(props.body),
-    });
-    if (res.ok) {
-      return await res.json();
-    } else {
-      const error: DjangoErrorResponseObject = await res.json();
-      throw new Error(parseErrorMessage(error));
-    }
-  } catch (error: unknown) {
-    RaiseErrorToast(toastErrorMessage(error));
-  }
-};
+export const PostData = async (props: Props) =>
+  await handleAPICall({ ...props, method: METHOD.POST });
 
-export const DeleteData = async (props: Props) => {
-  try {
-    const res = await fetch(props.url, {
-      method: METHOD.DELETE,
-      headers: getHeaders(),
-      body: JSON.stringify(props.body),
-    });
-    if (res.ok) {
-      return await res.json();
-    } else {
-      const error: DjangoErrorResponseObject = await res.json();
-      throw new Error(parseErrorMessage(error));
-    }
-  } catch (error: unknown) {
-    RaiseErrorToast(toastErrorMessage(error));
-  }
-};
+export const UpdateData = async (props: UpdateProps) =>
+  await handleAPICall({ ...props, method: props.METHOD || METHOD.PATCH });
+
+export const DeleteData = async (props: Props) =>
+  await handleAPICall({ ...props, method: METHOD.DELETE });

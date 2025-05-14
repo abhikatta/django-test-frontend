@@ -35,7 +35,16 @@ export const enum METHOD {
   DELETE = "DELETE",
 }
 
+export type extraHeaders = Record<string, string> & { recalled?: string };
+export interface HandleAPICallProps {
+  url: string;
+  method: `${METHOD}`;
+  extraHeaders?: extraHeaders;
+  body?: unknown;
+}
+
 export interface Props<T = any> {
+  extraHeaders?: extraHeaders;
   url: string;
   body?: T;
 }

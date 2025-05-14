@@ -1,6 +1,6 @@
 "use client";
 import { CreateCrewMember, CrewMember } from "@/types/global";
-import { clientAPI } from "@/lib/constants";
+import { apiRoutes } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
 import { useRolesStore } from "@/store/roles-store";
 import useGetCrew from "@/hooks/use-get-crew";
@@ -59,7 +59,7 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const deleteCrew = async (id: number) => {
     setDisabled(true);
     const res = await DeleteData({
-      url: clientAPI.crew,
+      url: apiRoutes.crew,
       body: {
         id,
       },
@@ -118,7 +118,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
     setDisabled(true);
 
     const res = await UpdateData({
-      url: clientAPI.crew,
+      url: apiRoutes.crew,
       body: {
         data,
         id: item.id,

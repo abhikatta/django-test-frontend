@@ -1,5 +1,5 @@
 "use client";
-import { clientAPI } from "@/lib/constants";
+import { apiRoutes } from "@/lib/constants";
 import { GetData } from "@/lib/db-utils";
 import { useCrewStore } from "@/store/crew-store";
 import { useEffect, useState } from "react";
@@ -19,7 +19,7 @@ const useGetCrew = () => {
   ];
   const getCrew = async () => {
     setIsLoading(true);
-    const data = await GetData({ url: clientAPI.crew });
+    const data = await GetData({ url: apiRoutes.crew });
     if (data) {
       setCrew(data);
     } else {

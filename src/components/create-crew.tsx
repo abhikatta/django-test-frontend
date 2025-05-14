@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schema";
-import { clientAPI } from "@/lib/constants";
+import { apiRoutes } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
 
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ const CreateCrewForm = () => {
   });
 
   const onSubmit = async (data: CreateCrewSchemaType) => {
-    const crewData = await PostData({ url: clientAPI.crew, body: data });
+    const crewData = await PostData({ url: apiRoutes.crew, body: data });
     if (crewData) {
       addCrewMember(crewData);
     }
