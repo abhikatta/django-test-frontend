@@ -1,18 +1,22 @@
 "use client";
 
+import { getUserFromLocalStorage } from "@/lib/local-storage-utils";
 import { useUserStore } from "@/store/user-store";
+import { useEffect } from "react";
 
-// TODO
 const useUser = () => {
-  const { user, setUser } = useUserStore();
+  const { user, setUser, logoutUser } = useUserStore();
 
-  const logoutUser = () => {
-    setUser(null);
-  };
-  const signup = () => {};
-  const login = () => {};
+  // auto logout user if localstorage has no user data
+  useEffect(() => {
+    const userData = getUserFromLocalStorage();
+    if (!userData) logoutUser();
+    else {
+      setUser(userData);
+    }
+  }, []);
 
-  return { user, logoutUser };
+  return { user, logoutUser, setUser };
 };
 
 export default useUser;

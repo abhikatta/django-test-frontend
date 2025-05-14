@@ -2,6 +2,8 @@ export interface User {
   firstname: string;
   lastname: string;
   email: string;
+  access: string;
+  refresh: string;
 }
 
 export interface CreateCrewMember {
