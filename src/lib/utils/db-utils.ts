@@ -8,9 +8,9 @@ import {
   User,
 } from "@/types/global";
 import { toast } from "sonner";
-import { parseErrorMessage, toastErrorMessage } from "./utils";
+import { parseErrorMessage, toastErrorMessage } from "./errors";
 import { useUserStore } from "@/store/user-store";
-import { apiRoutes } from "./constants";
+import { apiRoutes } from "../constants";
 
 const RaiseErrorToast = (error: string) => {
   return toast.error("Error!", {

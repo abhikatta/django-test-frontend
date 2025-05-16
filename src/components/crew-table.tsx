@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import {
   Form,
   FormControl,
@@ -47,9 +47,9 @@ import { Badge } from "./ui/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import { Switch } from "./ui/switch";
-import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schema";
+import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schemas/crew";
 import { useForm } from "react-hook-form";
-import { DeleteData, UpdateData } from "@/lib/db-utils";
+import { DeleteData, UpdateData } from "@/lib/utils/db-utils";
 import { Skeleton } from "./ui/skeleton";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {

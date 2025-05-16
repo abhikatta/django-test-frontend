@@ -1,25 +1,4 @@
 import { z } from "zod";
-export const createCrewSchema = z.object({
-  first_name: z
-    .string()
-    .min(3, "First name is required.")
-    .max(15, "Max characters exceeded."),
-  last_name: z
-    .string()
-    .min(3, "Last name is required.")
-    .max(15, "Max characters exceeded."),
-  email: z
-    .string()
-    .email()
-    .min(5, "Email must be atleast 5 characters.")
-    .email("Invalid email address"),
-  is_active: z.boolean(),
-  is_tasked: z.boolean(),
-  hourly_wage: z.coerce.number().min(0),
-  role: z.string(),
-});
-
-export type CreateCrewSchemaType = z.infer<typeof createCrewSchema>;
 
 export const signupSchema = z.object({
   first_name: z
@@ -40,7 +19,6 @@ export const signupSchema = z.object({
     .string()
     .min(8, "Password must have atleast 8 characters"),
 });
-export type SignupSchemaType = z.infer<typeof signupSchema>;
 
 export const loginSchema = z.object({
   username: z
@@ -49,4 +27,3 @@ export const loginSchema = z.object({
     .nonempty("Email is required!"),
   password: z.string().min(8, "Password should have minimun of 8 characters"),
 });
-export type LoginSchemaType = z.infer<typeof createCrewSchema>;

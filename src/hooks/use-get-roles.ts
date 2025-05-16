@@ -1,6 +1,6 @@
 "use client";
 import { apiRoutes } from "@/lib/constants";
-import { GetData } from "@/lib/db-utils";
+import { GetData } from "@/lib/utils/db-utils";
 import { useRolesStore } from "@/store/roles-store";
 import { useEffect } from "react";
 

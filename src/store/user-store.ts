@@ -3,7 +3,7 @@ import { UserState } from "./types";
 import {
   deleteUserLocalStorage,
   setUserLocalStorage,
-} from "@/lib/local-storage-utils";
+} from "@/lib/utils/local-storage-utils";
 
 export const useUserStore = create<UserState>((set) => ({
   user: null,

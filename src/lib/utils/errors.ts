@@ -1,11 +1,6 @@
-import { DjangoErrorResponseObject } from "@/types/global";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { SOMETHING_WENT_WRONG } from "./constants";
+import { SOMETHING_WENT_WRONG } from "../constants";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { DjangoErrorResponseObject } from "@/types/global";
 
 export const parseErrorMessage = (error: DjangoErrorResponseObject): string => {
   if ("detail" in error) {

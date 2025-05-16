@@ -43,7 +43,7 @@ export interface HandleAPICallProps {
   body?: unknown;
 }
 
-export interface Props<T = any> {
+export interface Props<T = unknown> {
   extraHeaders?: extraHeaders;
   url: string;
   body?: T;

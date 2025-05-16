@@ -1,5 +1,5 @@
 import { User } from "@/types/global";
-import { USER_LOCAL_STORAGE_KEY } from "./constants";
+import { USER_LOCAL_STORAGE_KEY } from "../constants";
 import { toast } from "sonner";
 
 export const setUserLocalStorage = (data: User) => {

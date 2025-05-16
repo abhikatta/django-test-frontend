@@ -1,6 +1,6 @@
 "use client";
 
-import { getUserFromLocalStorage } from "@/lib/local-storage-utils";
+import { getUserFromLocalStorage } from "@/lib/utils/local-storage-utils";
 import { useUserStore } from "@/store/user-store";
 import { useEffect } from "react";
 

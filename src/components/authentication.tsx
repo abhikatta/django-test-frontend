@@ -2,8 +2,8 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import CustomForm from "./reusable/auth-form";
-import { loginSchema, signupSchema } from "@/lib/schema";
-import { PostData } from "@/lib/db-utils";
+import { loginSchema, signupSchema } from "@/lib/schemas/auth";
+import { PostData } from "@/lib/utils/db-utils";
 import { apiRoutes } from "@/lib/constants";
 import { ButtonProps, PillPosition } from "@/types/auth-form";
 import useUser from "@/hooks/use-user";

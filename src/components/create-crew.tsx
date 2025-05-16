@@ -1,6 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schema";
+import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schemas/crew";
 import { apiRoutes } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
 
@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PostData } from "@/lib/db-utils";
+import { PostData } from "@/lib/utils/db-utils";
 import useGetRoles from "@/hooks/use-get-roles";
 
 const CreateCrewForm = () => {
