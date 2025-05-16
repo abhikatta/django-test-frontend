@@ -3,7 +3,7 @@ import { apiRoutes } from "@/lib/constants";
 import { GetData } from "@/lib/utils/db-utils";
 import { useCrewStore } from "@/store/crew-store";
 import { CrewMember } from "@/types/global";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const useGetCrew = () => {
   const { crew, setCrew } = useCrewStore();
@@ -18,7 +18,7 @@ const useGetCrew = () => {
     "Task Status",
     "Hourly Wage",
   ];
-  const getCrew = async () => {
+  const getCrew = useCallback(async () => {
     setIsLoading(true);
     const crewData = await GetData<CrewMember[]>({ url: apiRoutes.crew });
     if (crewData) {
@@ -27,11 +27,11 @@ const useGetCrew = () => {
       setIsError(true);
     }
     setIsLoading(false);
-  };
+  }, [setCrew]);
 
   useEffect(() => {
     getCrew();
-  }, []);
+  }, [getCrew]);
 
   return { crewMemberKeys, crew, isLoading, isError };
 };
