@@ -29,9 +29,7 @@ export default function RootLayout({
         <SidebarProvider>
           <Navbar />
           <CustomSidebarTrigger />
-          <main className="flex flex-col w-full items-center justify-center">
-            {children}
-          </main>
+          <main className="flex flex-col w-full items-center">{children}</main>
         </SidebarProvider>
       </body>
     </html>

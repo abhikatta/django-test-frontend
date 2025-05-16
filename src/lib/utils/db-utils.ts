@@ -76,6 +76,8 @@ const handleAPICall = async ({
       return await res.json();
     } else if (res.status === 401) {
       return await refreshToken({ extraHeaders, url, body, method });
+    } else if (res.status === 404) {
+      throw new Error("Request is not valid!");
     } else {
       const error: DjangoErrorResponseObject = await res.json();
       throw new Error(parseErrorMessage(error));
@@ -85,14 +87,14 @@ const handleAPICall = async ({
   }
 };
 
-export const GetData = async (props: Props) =>
+export const GetData = async <T>(props: Props): Promise<T> =>
   await handleAPICall({ ...props, method: METHOD.GET });
 
-export const PostData = async (props: Props) =>
+export const PostData = async <T>(props: Props): Promise<T> =>
   await handleAPICall({ ...props, method: METHOD.POST });
 
-export const UpdateData = async (props: UpdateProps) =>
+export const UpdateData = async <T>(props: UpdateProps): Promise<T> =>
   await handleAPICall({ ...props, method: props.METHOD || METHOD.PATCH });
 
-export const DeleteData = async (props: Props) =>
+export const DeleteData = async <T>(props: Props): Promise<T> =>
   await handleAPICall({ ...props, method: METHOD.DELETE });

@@ -26,6 +26,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PostData } from "@/lib/utils/db-utils";
 import useGetRoles from "@/hooks/use-get-roles";
+import { CrewMember } from "@/types/global";
 
 const CreateCrewForm = () => {
   const { addCrewMember } = useCrewStore();
@@ -44,7 +45,10 @@ const CreateCrewForm = () => {
   });
 
   const onSubmit = async (data: CreateCrewSchemaType) => {
-    const crewData = await PostData({ url: apiRoutes.crew, body: data });
+    const crewData = await PostData<CrewMember>({
+      url: apiRoutes.crew,
+      body: data,
+    });
     if (crewData) {
       addCrewMember(crewData);
     }

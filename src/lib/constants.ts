@@ -4,6 +4,7 @@ export const apiRoutes = {
   crew: `${BASE_URL}/api/crew/`,
   roles: `${BASE_URL}/api/roles/`,
   accounts: {
+    user: `${BASE_URL}/api/accounts/user/`,
     login: `${BASE_URL}/api/accounts/login/`,
     signup: `${BASE_URL}/api/accounts/signup/`,
     getAccessToken: `${BASE_URL}/api/token/refresh/`,

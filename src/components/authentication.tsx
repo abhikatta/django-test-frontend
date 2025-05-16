@@ -1,17 +1,109 @@
 "use client";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import CustomForm from "./reusable/auth-form";
 import { loginSchema, signupSchema } from "@/lib/schemas/auth";
 import { PostData } from "@/lib/utils/db-utils";
 import { apiRoutes } from "@/lib/constants";
-import { ButtonProps, PillPosition } from "@/types/auth-form";
+import { AuthFormProps } from "@/types/auth-form";
+import { ButtonProps, PillPosition } from "@/types/component-types";
+import { FormNavButton } from "./reusable/buttons";
+import { Tokens, User } from "@/types/global";
 import useUser from "@/hooks/use-user";
 
-import { FormNavButton } from "./reusable/buttons";
+export const LoginForm = memo(({ setUser, fetchUser }: AuthFormProps) => (
+  <div id="login-tab">
+    <CustomForm
+      schema={loginSchema}
+      onSubmit={async (data) => {
+        const tokenData = await PostData<Tokens>({
+          url: apiRoutes.accounts.login,
+          body: data,
+        });
+
+        const userData = await fetchUser(tokenData);
+
+        if (tokenData && userData) {
+          setUser({ ...userData, ...tokenData });
+        }
+      }}
+      defaultValues={{ username: "", password: "" }}
+      fields={[
+        {
+          name: "username",
+          label: "Email",
+          type: "email",
+        },
+        {
+          name: "password",
+          label: "Password",
+          type: "password",
+        },
+      ]}
+    />
+  </div>
+));
+
+LoginForm.displayName = "LoginForm";
+
+export const SignUpForm = memo(
+  ({ setUser }: { setUser: AuthFormProps["setUser"] }) => (
+    <div id="signup-tab">
+      <CustomForm
+        schema={signupSchema}
+        onSubmit={async (data) => {
+          console.log("data", data);
+          const userData = await PostData<User>({
+            url: apiRoutes.accounts.signup,
+            body: data,
+          });
+          if (userData) {
+            setUser(userData);
+          }
+        }}
+        defaultValues={{
+          first_name: "",
+          last_name: "",
+          email: "",
+          password: "",
+          confirm_password: "",
+        }}
+        fields={[
+          {
+            name: "first_name",
+            label: "First Name",
+            type: "text",
+          },
+          {
+            name: "last_name",
+            label: "Last Name",
+            type: "text",
+          },
+          {
+            name: "email",
+            label: "Email",
+            type: "email",
+          },
+          {
+            name: "password",
+            label: "Password",
+            type: "password",
+          },
+          {
+            name: "confirm_password",
+            label: "Confirm Password",
+            type: "password",
+          },
+        ]}
+      />
+    </div>
+  )
+);
+
+SignUpForm.displayName = "SignUpForm";
 
 const Authentication = () => {
-  const { setUser } = useUser();
+  const { setUser, fetchUser } = useUser();
   const [openTab, setOpenTab] = useState<"login" | "signup">("login");
   const [position, setPosition] = useState<PillPosition>({
     left: 0,
@@ -64,83 +156,9 @@ const Authentication = () => {
         </div>
         <div>
           {openTab === "login" ? (
-            <div id="login-tab">
-              <CustomForm
-                schema={loginSchema}
-                onSubmit={async (data) => {
-                  const userData = await PostData({
-                    url: apiRoutes.accounts.login,
-                    body: data,
-                  });
-                  if (userData) {
-                    setUser(userData);
-                  }
-                }}
-                defaultValues={{ username: "", password: "" }}
-                fields={[
-                  {
-                    name: "username",
-                    label: "Email",
-                    type: "email",
-                  },
-                  {
-                    name: "password",
-                    label: "Password",
-                    type: "password",
-                  },
-                ]}
-              />
-            </div>
+            <LoginForm setUser={setUser} fetchUser={fetchUser} />
           ) : (
-            <div id="signup-tab">
-              <CustomForm
-                schema={signupSchema}
-                onSubmit={async (data) => {
-                  console.log("data", data);
-                  const userData = await PostData({
-                    url: apiRoutes.accounts.signup,
-                    body: data,
-                  });
-                  if (userData) {
-                    setUser(userData);
-                  }
-                }}
-                defaultValues={{
-                  first_name: "",
-                  last_name: "",
-                  email: "",
-                  password: "",
-                  confirm_password: "",
-                }}
-                fields={[
-                  {
-                    name: "first_name",
-                    label: "First Name",
-                    type: "text",
-                  },
-                  {
-                    name: "last_name",
-                    label: "Last Name",
-                    type: "text",
-                  },
-                  {
-                    name: "email",
-                    label: "Email",
-                    type: "email",
-                  },
-                  {
-                    name: "password",
-                    label: "Password",
-                    type: "password",
-                  },
-                  {
-                    name: "confirm_password",
-                    label: "Confirm Password",
-                    type: "password",
-                  },
-                ]}
-              />
-            </div>
+            <SignUpForm setUser={setUser} />
           )}
         </div>
       </div>

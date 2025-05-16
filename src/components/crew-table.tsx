@@ -58,7 +58,7 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
 
   const deleteCrew = async (id: number) => {
     setDisabled(true);
-    const res = await DeleteData({
+    const res = await DeleteData<CrewMember>({
       url: apiRoutes.crew,
       body: {
         id,
@@ -117,7 +117,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const updateCrew = async (data: CreateCrewMember) => {
     setDisabled(true);
 
-    const res = await UpdateData({
+    const res = await UpdateData<CrewMember>({
       url: apiRoutes.crew,
       body: {
         data,

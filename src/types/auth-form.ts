@@ -1,14 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
+import { Tokens, User } from "./global";
 
-export interface PillPosition {
-  left: number;
-  width: number;
-  height: number;
-}
-
-export interface ButtonProps {
-  name: string;
-  label: string;
-  onClick: () => void;
-  setPillPosition: Dispatch<SetStateAction<PillPosition>>;
+export interface AuthFormProps {
+  setUser: (user: User) => void;
+  fetchUser: (tokenData: Tokens) => Promise<User>;
 }

@@ -1,9 +1,12 @@
-export interface User {
-  firstname: string;
-  lastname: string;
-  email: string;
+export interface Tokens {
   access: string;
   refresh: string;
+}
+
+export interface User extends Tokens {
+  first_name: string;
+  last_name: string;
+  email: string;
 }
 
 export interface CreateCrewMember {

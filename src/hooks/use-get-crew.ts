@@ -2,6 +2,7 @@
 import { apiRoutes } from "@/lib/constants";
 import { GetData } from "@/lib/utils/db-utils";
 import { useCrewStore } from "@/store/crew-store";
+import { CrewMember } from "@/types/global";
 import { useEffect, useState } from "react";
 
 const useGetCrew = () => {
@@ -19,9 +20,9 @@ const useGetCrew = () => {
   ];
   const getCrew = async () => {
     setIsLoading(true);
-    const data = await GetData({ url: apiRoutes.crew });
-    if (data) {
-      setCrew(data);
+    const crewData = await GetData<CrewMember[]>({ url: apiRoutes.crew });
+    if (crewData) {
+      setCrew(crewData);
     } else {
       setIsError(true);
     }
