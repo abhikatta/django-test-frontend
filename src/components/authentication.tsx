@@ -1,36 +1,14 @@
 "use client";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import CustomForm from "./auth-forms";
+import CustomForm from "./reusable/auth-form";
 import { loginSchema, signupSchema } from "@/lib/schema";
 import { PostData } from "@/lib/db-utils";
 import { apiRoutes } from "@/lib/constants";
 import { ButtonProps, PillPosition } from "@/types/auth-form";
 import useUser from "@/hooks/use-user";
 
-const Button = ({ name, label, onClick, setPillPosition }: ButtonProps) => {
-  const ref = useRef<HTMLButtonElement | null>(null);
-  const onButtonClick = () => {
-    onClick();
-    if (ref.current) {
-      const { width, left, height } = ref.current.getBoundingClientRect();
-      setPillPosition({
-        width,
-        left,
-        height,
-      });
-    }
-  };
-  return (
-    <button
-      ref={ref}
-      name={name}
-      className="cursor-pointer text-3xl rounded-full px-10 py-2 w-[10rem] bg-transparent"
-      onClick={onButtonClick}>
-      {label}
-    </button>
-  );
-};
+import { FormNavButton } from "./reusable/buttons";
 
 const Authentication = () => {
   const { setUser } = useUser();
@@ -72,7 +50,11 @@ const Authentication = () => {
           ref={parentRef}
           className="flex flex-row items-center w-full justify-between">
           {buttons.map((button, index) => (
-            <Button key={index} setPillPosition={setPosition} {...button} />
+            <FormNavButton
+              key={index}
+              setPillPosition={setPosition}
+              {...button}
+            />
           ))}
           <motion.div
             id="underline"

@@ -3,6 +3,10 @@ import { Mulish } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
+import Navbar from "@/components/nav";
+import CustomSidebarTrigger from "@/components/nav/sidebar-trigger";
+import { SidebarProvider } from "@/components/ui/sidebar";
+
 const muslish = Mulish({
   variable: "--font-mulish",
   subsets: ["latin"],
@@ -22,7 +26,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={` ${muslish.variable} antialiased`}>
         <Toaster />
-        {children}
+        <SidebarProvider>
+          <Navbar />
+          <CustomSidebarTrigger />
+          <main className="flex flex-col w-full items-center justify-center">
+            {children}
+          </main>
+        </SidebarProvider>
       </body>
     </html>
   );

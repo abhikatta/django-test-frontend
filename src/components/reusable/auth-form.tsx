@@ -8,11 +8,11 @@ import {
   FormItem,
   FormControl,
   FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { Path, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 interface FormProps<T extends ZodSchema> {
   schema: T;

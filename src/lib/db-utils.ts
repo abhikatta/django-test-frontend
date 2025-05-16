@@ -25,7 +25,7 @@ export const refreshToken = async ({
   url,
   method,
   body,
-}: HandleAPICallProps) => {
+}: HandleAPICallProps): Promise<unknown> => {
   // if not already recalled the api
   if (extraHeaders && !extraHeaders["recalled"]) {
     const tokenRes = await PostData({
@@ -60,7 +60,7 @@ const handleAPICall = async ({
   method,
   body,
   extraHeaders,
-}: HandleAPICallProps): Promise<unknown> => {
+}: HandleAPICallProps) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${useUserStore.getState().user?.access ?? ""}`,
