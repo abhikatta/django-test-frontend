@@ -10,6 +10,9 @@ import { useCallback, useEffect } from "react";
 const useUser = () => {
   const { user, setUser, logoutUser } = useUserStore();
 
+  // This response could be in the same api as login or signup in backend but
+  // it wont fetch again on refresh and user can modify the data in localstorage and we dont want that
+
   const fetchUser = useCallback(async (tokenData: Tokens) => {
     const userData = await GetData<User>({
       url: apiRoutes.accounts.user,
@@ -18,17 +21,25 @@ const useUser = () => {
         Authorization: `Bearer ${tokenData.access}`,
       },
     });
-
-    return { ...userData, ...tokenData };
+    if (userData) return { ...userData, ...tokenData };
   }, []);
+
+  const fetchAndSetUser = useCallback(
+    async (tokenData: Tokens) => {
+      const userData = await fetchUser(tokenData);
+      if (userData) setUser(userData);
+    },
+    [fetchUser, setUser]
+  );
+
   // auto logout user if localstorage has no user data
   useEffect(() => {
     const tokenData = getUserFromLocalStorage();
     if (!tokenData) logoutUser();
     else {
-      fetchUser(tokenData);
+      fetchAndSetUser(tokenData);
     }
-  }, [logoutUser, fetchUser]);
+  }, [logoutUser, fetchAndSetUser]);
 
   return { user, logoutUser, setUser, fetchUser };
 };

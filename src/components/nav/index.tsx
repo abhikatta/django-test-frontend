@@ -36,8 +36,8 @@ const navItems: NavItem[] = [
     icon: User,
   },
   {
-    label: "Employees",
-    url: "/employees",
+    label: "Crew",
+    url: "/crew",
     icon: Users,
   },
 ];

@@ -1,5 +1,5 @@
 "use client";
-import { CreateCrewMember, CrewMember } from "@/types/global";
+import { CreateCrewMember, CrewMember, METHOD } from "@/types/global";
 import { apiRoutes } from "@/lib/constants";
 import { useCrewStore } from "@/store/crew-store";
 import { useRolesStore } from "@/store/roles-store";
@@ -59,7 +59,7 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const deleteCrew = async (id: number) => {
     setDisabled(true);
     const res = await DeleteData<CrewMember>({
-      url: apiRoutes.crew,
+      url: apiRoutes.crewWithId(id),
       body: {
         id,
       },
@@ -118,10 +118,10 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
     setDisabled(true);
 
     const res = await UpdateData<CrewMember>({
-      url: apiRoutes.crew,
+      url: apiRoutes.crewWithId(item.id),
+      METHOD: METHOD.PUT,
       body: {
-        data,
-        id: item.id,
+        ...data,
       },
     });
     if (res) {
@@ -150,7 +150,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
               name="first_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <FormControl>
                     <Input placeholder="First Name" {...field} />
                   </FormControl>

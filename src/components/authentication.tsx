@@ -20,11 +20,11 @@ export const LoginForm = memo(({ setUser, fetchUser }: AuthFormProps) => (
           url: apiRoutes.accounts.login,
           body: data,
         });
-
-        const userData = await fetchUser(tokenData);
-
-        if (tokenData && userData) {
-          setUser({ ...userData, ...tokenData });
+        if (tokenData) {
+          const userData = await fetchUser(tokenData);
+          if (userData) {
+            setUser({ ...userData, ...tokenData });
+          }
         }
       }}
       defaultValues={{ username: "", password: "" }}
@@ -52,7 +52,6 @@ export const SignUpForm = memo(
       <CustomForm
         schema={signupSchema}
         onSubmit={async (data) => {
-          console.log("data", data);
           const userData = await PostData<User>({
             url: apiRoutes.accounts.signup,
             body: data,

@@ -4,6 +4,7 @@ import {
   HandleAPICallProps,
   METHOD,
   Props,
+  Tokens,
   UpdateProps,
   User,
 } from "@/types/global";
@@ -11,6 +12,7 @@ import { toast } from "sonner";
 import { parseErrorMessage, toastErrorMessage } from "./errors";
 import { useUserStore } from "@/store/user-store";
 import { apiRoutes } from "../constants";
+import { getUserFromLocalStorage } from "./local-storage-utils";
 
 const RaiseErrorToast = (error: string) => {
   return toast.error("Error!", {
@@ -27,10 +29,13 @@ export const refreshToken = async ({
   body,
 }: HandleAPICallProps): Promise<unknown> => {
   // if not already recalled the api
-  if (extraHeaders && !extraHeaders["recalled"]) {
-    const tokenRes = await PostData({
+  const tokenData = getUserFromLocalStorage();
+
+  if (extraHeaders && !extraHeaders["recalled"] && tokenData) {
+    console.log("refresh Csalled");
+    const tokenRes = await PostData<Tokens>({
       url: apiRoutes.accounts.getAccessToken,
-      body: { refresh: useUserStore.getState().user?.refresh },
+      body: { refresh: tokenData.refresh },
       extraHeaders: { recalled: "true" },
     });
     // if successfully got the refresh token, update in state
@@ -48,8 +53,9 @@ export const refreshToken = async ({
         extraHeaders: { ...(extraHeaders || {}), recalled: "true" },
       });
     }
-    // if all failed, logout user and toast error
-  } else {
+  }
+  // if all failed, logout user and toast error
+  else {
     useUserStore.getState().logoutUser();
     throw new Error(parseErrorMessage({ detail: "Session has expired!" }));
   }
@@ -61,11 +67,17 @@ const handleAPICall = async ({
   body,
   extraHeaders,
 }: HandleAPICallProps) => {
+  const authToken = useUserStore.getState().user?.access || null;
+  const authorizationHeader = authToken
+    ? { Authorization: `Bearer ${authToken}` }
+    : null;
+
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${useUserStore.getState().user?.access ?? ""}`,
+    ...authorizationHeader,
     ...extraHeaders,
   };
+
   try {
     const res = await fetch(url, {
       method,
@@ -78,6 +90,8 @@ const handleAPICall = async ({
       return await refreshToken({ extraHeaders, url, body, method });
     } else if (res.status === 404) {
       throw new Error("Request is not valid!");
+    } else if (res.status === 405) {
+      return {};
     } else {
       const error: DjangoErrorResponseObject = await res.json();
       throw new Error(parseErrorMessage(error));
@@ -87,14 +101,16 @@ const handleAPICall = async ({
   }
 };
 
-export const GetData = async <T>(props: Props): Promise<T> =>
+export const GetData = async <T>(props: Props): Promise<T | undefined> =>
   await handleAPICall({ ...props, method: METHOD.GET });
 
-export const PostData = async <T>(props: Props): Promise<T> =>
+export const PostData = async <T>(props: Props): Promise<T | undefined> =>
   await handleAPICall({ ...props, method: METHOD.POST });
 
-export const UpdateData = async <T>(props: UpdateProps): Promise<T> =>
+export const UpdateData = async <T>(
+  props: UpdateProps
+): Promise<T | undefined> =>
   await handleAPICall({ ...props, method: props.METHOD || METHOD.PATCH });
 
-export const DeleteData = async <T>(props: Props): Promise<T> =>
+export const DeleteData = async <T>(props: Props): Promise<T | undefined> =>
   await handleAPICall({ ...props, method: METHOD.DELETE });
