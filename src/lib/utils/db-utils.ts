@@ -4,15 +4,11 @@ import {
   HandleAPICallProps,
   METHOD,
   Props,
-  Tokens,
   UpdateProps,
-  User,
 } from "@/types/global";
 import { toast } from "sonner";
 import { parseErrorMessage, toastErrorMessage } from "./errors";
-import { useUserStore } from "@/store/user-store";
-import { apiRoutes } from "../constants";
-import { getUserFromLocalStorage } from "./local-storage-utils";
+// import { apiRoutes } from "../constants";
 
 const RaiseErrorToast = (error: string) => {
   return toast.error("Error!", {
@@ -22,43 +18,9 @@ const RaiseErrorToast = (error: string) => {
   });
 };
 
-export const refreshToken = async ({
-  extraHeaders,
-  url,
-  method,
-  body,
-}: HandleAPICallProps): Promise<unknown> => {
-  // if not already recalled the api
-  const tokenData = getUserFromLocalStorage();
-
-  if (extraHeaders && !extraHeaders["recalled"] && tokenData) {
-    console.log("refresh Csalled");
-    const tokenRes = await PostData<Tokens>({
-      url: apiRoutes.accounts.getAccessToken,
-      body: { refresh: tokenData.refresh },
-      extraHeaders: { recalled: "true" },
-    });
-    // if successfully got the refresh token, update in state
-    if (tokenRes) {
-      const tokenData = tokenRes as Partial<User>;
-      useUserStore.getState().setUser({
-        ...useUserStore.getState().user!,
-        access: tokenData.access!,
-      });
-      // call the original api again
-      return await handleAPICall({
-        url,
-        method,
-        body,
-        extraHeaders: { ...(extraHeaders || {}), recalled: "true" },
-      });
-    }
-  }
-  // if all failed, logout user and toast error
-  else {
-    useUserStore.getState().logoutUser();
-    throw new Error(parseErrorMessage({ detail: "Session has expired!" }));
-  }
+// TODO
+export const refreshToken = async (): Promise<unknown> => {
+  return {};
 };
 
 const handleAPICall = async ({
@@ -67,14 +29,8 @@ const handleAPICall = async ({
   body,
   extraHeaders,
 }: HandleAPICallProps) => {
-  const authToken = useUserStore.getState().user?.access || null;
-  const authorizationHeader = authToken
-    ? { Authorization: `Bearer ${authToken}` }
-    : null;
-
   const headers = {
     "Content-Type": "application/json",
-    ...authorizationHeader,
     ...extraHeaders,
   };
 
@@ -82,15 +38,31 @@ const handleAPICall = async ({
     const res = await fetch(url, {
       method,
       headers,
+      credentials: "include",
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
     if (res.ok) {
       return await res.json();
     } else if (res.status === 401) {
-      return await refreshToken({ extraHeaders, url, body, method });
+      // perform token refresh
+      await refreshToken();
+      // retry original request
+      const res = await fetch(url, {
+        method,
+        headers,
+        credentials: "include",
+        ...(body ? { body: JSON.stringify(body) } : {}),
+      });
+      if (res.ok) {
+        return await res.json();
+      } else {
+        throw new Error("Session has expired. Please login again!");
+      }
     } else if (res.status === 404) {
       throw new Error("Request is not valid!");
-    } else if (res.status === 405) {
+    }
+    // for like DELETE requests, there is no response so returning an empty object
+    else if (res.status === 405) {
       return {};
     } else {
       const error: DjangoErrorResponseObject = await res.json();

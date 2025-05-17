@@ -13,5 +13,3 @@ export const apiRoutes = {
 };
 
 export const SOMETHING_WENT_WRONG = "Something went wrong!";
-
-export const USER_LOCAL_STORAGE_KEY = "user";
