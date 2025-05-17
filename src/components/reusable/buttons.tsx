@@ -1,5 +1,4 @@
 "use client";
-import { ButtonProps } from "@/types/auth-form";
 import { useRef, useState } from "react";
 
 import {
@@ -14,6 +13,9 @@ import {
 import { useUserStore } from "@/store/user-store";
 import { Button } from "../ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { PostData } from "@/lib/utils/db-utils";
+import { apiRoutes } from "@/lib/constants";
+import { ButtonProps } from "@/types/component-types";
 
 export const FormNavButton = ({
   name,
@@ -52,9 +54,14 @@ export const SignOutButton = ({
   const { logoutUser } = useUserStore();
   const [open, setOpen] = useState(false);
 
-  const handleSignOut = () => {
-    logoutUser();
-    closeDropdown();
+  const handleSignOut = async () => {
+    const logoutSuccess = await PostData({
+      url: apiRoutes.accounts.logout,
+    });
+    if (logoutSuccess) {
+      logoutUser();
+      closeDropdown();
+    }
     setOpen(false);
   };
 

@@ -7,8 +7,9 @@ export const apiRoutes = {
   accounts: {
     user: `${BASE_URL}/api/accounts/user/`,
     login: `${BASE_URL}/api/accounts/login/`,
+    logout: `${BASE_URL}/api/accounts/logout/`,
     signup: `${BASE_URL}/api/accounts/signup/`,
-    getAccessToken: `${BASE_URL}/api/token/refresh/`,
+    refreshToken: `${BASE_URL}/api/token/refresh/`,
   },
 };
 

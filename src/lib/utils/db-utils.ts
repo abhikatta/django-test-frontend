@@ -8,7 +8,7 @@ import {
 } from "@/types/global";
 import { toast } from "sonner";
 import { parseErrorMessage, toastErrorMessage } from "./errors";
-// import { apiRoutes } from "../constants";
+import { apiRoutes } from "../constants";
 
 const RaiseErrorToast = (error: string) => {
   return toast.error("Error!", {
@@ -18,9 +18,18 @@ const RaiseErrorToast = (error: string) => {
   });
 };
 
-// TODO
 export const refreshToken = async (): Promise<unknown> => {
-  return {};
+  try {
+    const res = await fetch(apiRoutes.accounts.refreshToken, {
+      method: METHOD.POST,
+      credentials: "include",
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (error) {
+    RaiseErrorToast(toastErrorMessage(error));
+  }
 };
 
 const handleAPICall = async ({
@@ -33,7 +42,7 @@ const handleAPICall = async ({
     "Content-Type": "application/json",
     ...extraHeaders,
   };
-
+  console.log("body", body);
   try {
     const res = await fetch(url, {
       method,
@@ -45,8 +54,11 @@ const handleAPICall = async ({
       return await res.json();
     } else if (res.status === 401) {
       // perform token refresh
-      await refreshToken();
+      const refreshTokenres = await refreshToken();
       // retry original request
+      if (!refreshTokenres) {
+        throw new Error("Session has expired. Please login again!");
+      }
       const res = await fetch(url, {
         method,
         headers,
@@ -56,7 +68,7 @@ const handleAPICall = async ({
       if (res.ok) {
         return await res.json();
       } else {
-        throw new Error("Session has expired. Please login again!");
+        throw new Error("Error fetching data");
       }
     } else if (res.status === 404) {
       throw new Error("Request is not valid!");
