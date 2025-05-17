@@ -5,49 +5,47 @@ import CustomForm from "./reusable/auth-form";
 import { loginSchema, signupSchema } from "@/lib/schemas/auth";
 import { PostData } from "@/lib/utils/db-utils";
 import { apiRoutes } from "@/lib/constants";
-import { AuthFormProps } from "@/types/auth-form";
 import { ButtonProps, PillPosition } from "@/types/component-types";
 import { FormNavButton } from "./reusable/buttons";
-import { Tokens, User } from "@/types/global";
+import { User } from "@/types/global";
 import useUser from "@/hooks/use-user";
 
-export const LoginForm = memo(({ setUser, fetchUser }: AuthFormProps) => (
-  <div id="login-tab">
-    <CustomForm
-      schema={loginSchema}
-      onSubmit={async (data) => {
-        const tokenData = await PostData<Tokens>({
-          url: apiRoutes.accounts.login,
-          body: data,
-        });
-        if (tokenData) {
-          const userData = await fetchUser(tokenData);
+export const LoginForm = memo(
+  ({ setUser }: { setUser: (user: User) => void }) => (
+    <div id="login-tab">
+      <CustomForm
+        schema={loginSchema}
+        onSubmit={async (data) => {
+          const userData = await PostData<User>({
+            url: apiRoutes.accounts.login,
+            body: data,
+          });
           if (userData) {
-            setUser({ ...userData, ...tokenData });
+            setUser(userData);
           }
-        }
-      }}
-      defaultValues={{ username: "", password: "" }}
-      fields={[
-        {
-          name: "username",
-          label: "Email",
-          type: "email",
-        },
-        {
-          name: "password",
-          label: "Password",
-          type: "password",
-        },
-      ]}
-    />
-  </div>
-));
+        }}
+        defaultValues={{ username: "", password: "" }}
+        fields={[
+          {
+            name: "username",
+            label: "Email",
+            type: "email",
+          },
+          {
+            name: "password",
+            label: "Password",
+            type: "password",
+          },
+        ]}
+      />
+    </div>
+  )
+);
 
 LoginForm.displayName = "LoginForm";
 
 export const SignUpForm = memo(
-  ({ setUser }: { setUser: AuthFormProps["setUser"] }) => (
+  ({ setUser }: { setUser: (user: User) => void }) => (
     <div id="signup-tab">
       <CustomForm
         schema={signupSchema}
@@ -102,7 +100,7 @@ export const SignUpForm = memo(
 SignUpForm.displayName = "SignUpForm";
 
 const Authentication = () => {
-  const { setUser, fetchUser } = useUser();
+  const { setUser } = useUser();
   const [openTab, setOpenTab] = useState<"login" | "signup">("login");
   const [position, setPosition] = useState<PillPosition>({
     left: 0,
@@ -155,7 +153,7 @@ const Authentication = () => {
         </div>
         <div>
           {openTab === "login" ? (
-            <LoginForm setUser={setUser} fetchUser={fetchUser} />
+            <LoginForm setUser={setUser} />
           ) : (
             <SignUpForm setUser={setUser} />
           )}

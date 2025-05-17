@@ -1,9 +1,4 @@
-export interface Tokens {
-  access: string;
-  refresh: string;
-}
-
-export interface User extends Tokens {
+export interface User {
   first_name: string;
   last_name: string;
   email: string;
