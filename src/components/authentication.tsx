@@ -8,7 +8,7 @@ import { apiRoutes } from "@/lib/constants";
 import { ButtonProps, PillPosition } from "@/types/component-types";
 import { FormNavButton } from "./reusable/buttons";
 import { User } from "@/types/global";
-import useUser from "@/hooks/use-user";
+import { useUserStore } from "@/store/user-store";
 
 export const LoginForm = memo(
   ({ setUser }: { setUser: (user: User) => void }) => (
@@ -100,7 +100,7 @@ export const SignUpForm = memo(
 SignUpForm.displayName = "SignUpForm";
 
 const Authentication = () => {
-  const { setUser } = useUser();
+  const { setUser } = useUserStore();
   const [openTab, setOpenTab] = useState<"login" | "signup">("login");
   const [position, setPosition] = useState<PillPosition>({
     left: 0,
