@@ -1,17 +1,18 @@
 "use client";
-import Authentication from "@/components/authentication";
 import { useUserStore } from "@/store/user-store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-
-const Page = () => {
-  const router = useRouter();
+const ProtectRoute = () => {
   const { user } = useUserStore();
-  useEffect(() => {
-    if (user) router.push("/crew");
-  }, [user, router]);
+  const router = useRouter();
 
-  return <Authentication />;
+  // if user is not present in state(loggeed in), redirect to login page
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+  }, [user, router]);
+  return <></>;
 };
 
-export default Page;
+export default ProtectRoute;

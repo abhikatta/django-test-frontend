@@ -27,33 +27,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PostData } from "@/lib/utils/db-utils";
 import useGetRoles from "@/hooks/use-get-roles";
 import { CrewMember } from "@/types/global";
+import { CrewFormProps } from "@/types/component-types";
 
-const CreateCrewForm = () => {
-  const { addCrewMember } = useCrewStore();
-  const { roles } = useGetRoles();
-  const form = useForm<CreateCrewSchemaType>({
-    resolver: zodResolver(createCrewSchema),
-    defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      is_active: true,
-      is_tasked: false,
-      role: "",
-      hourly_wage: 0,
-    },
-  });
-
-  const onSubmit = async (data: CreateCrewSchemaType) => {
-    const crewData = await PostData<CrewMember>({
-      url: apiRoutes.crew,
-      body: data,
-    });
-    if (crewData) {
-      addCrewMember(crewData);
-    }
-  };
-
+export const CrewForm = ({
+  form,
+  roles,
+  onSubmit,
+  disabled,
+}: CrewFormProps) => {
   return (
     <Form {...form}>
       <form
@@ -61,7 +42,7 @@ const CreateCrewForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
-          name="first_name"
+          name={"first_name"}
           render={({ field }) => (
             <FormItem>
               <FormLabel>First Name</FormLabel>
@@ -180,12 +161,41 @@ const CreateCrewForm = () => {
             </FormItem>
           )}
         />
-        <Button variant="default" type="submit">
+        <Button disabled={disabled || false} variant="default" type="submit">
           Submit
         </Button>
       </form>
     </Form>
   );
+};
+
+const CreateCrewForm = () => {
+  const { addCrewMember } = useCrewStore();
+  const { roles } = useGetRoles();
+  const form = useForm<CreateCrewSchemaType>({
+    resolver: zodResolver(createCrewSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      is_active: true,
+      is_tasked: false,
+      role: "",
+      hourly_wage: 0,
+    },
+  });
+
+  const onSubmit = async (data: CreateCrewSchemaType) => {
+    const crewData = await PostData<CrewMember>({
+      url: apiRoutes.crew,
+      body: data,
+    });
+    if (crewData) {
+      addCrewMember(crewData);
+    }
+  };
+
+  return <CrewForm onSubmit={onSubmit} roles={roles} form={form} />;
 };
 
 export default CreateCrewForm;

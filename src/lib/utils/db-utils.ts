@@ -42,7 +42,6 @@ const handleAPICall = async ({
     "Content-Type": "application/json",
     ...extraHeaders,
   };
-  console.log("body", body);
   try {
     const res = await fetch(url, {
       method,
@@ -51,6 +50,10 @@ const handleAPICall = async ({
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
     if (res.ok) {
+      // for like DELETE requests, there is no response so returning an empty object
+      if (res.status === 204 || res.status !== 200) {
+        return true;
+      }
       return await res.json();
     } else if (res.status === 401) {
       // perform token refresh
@@ -72,10 +75,6 @@ const handleAPICall = async ({
       }
     } else if (res.status === 404) {
       throw new Error("Request is not valid!");
-    }
-    // for like DELETE requests, there is no response so returning an empty object
-    else if (res.status === 405) {
-      return {};
     } else {
       const error: DjangoErrorResponseObject = await res.json();
       throw new Error(parseErrorMessage(error));

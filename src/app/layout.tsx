@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import Navbar from "@/components/nav";
 import CustomSidebarTrigger from "@/components/nav/sidebar-trigger";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import ProtectRoute from "@/components/protected-route";
 
 const muslish = Mulish({
   variable: "--font-mulish",
@@ -28,6 +29,7 @@ export default function RootLayout({
         <Toaster />
         <SidebarProvider>
           <Navbar />
+          <ProtectRoute />
           <CustomSidebarTrigger />
           <main className="flex flex-col w-full items-center">{children}</main>
         </SidebarProvider>

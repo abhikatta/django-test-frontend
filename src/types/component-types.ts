@@ -1,3 +1,4 @@
+import { CreateCrewSchemaType } from "@/lib/schemas/crew";
 import { LucideProps } from "lucide-react";
 import {
   ForwardRefExoticComponent,
@@ -5,6 +6,8 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
+import { Role } from "./global";
+import { useForm } from "react-hook-form";
 
 export interface PillPosition {
   left: number;
@@ -24,4 +27,11 @@ export interface NavItem {
   icon: ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
+}
+
+export interface CrewFormProps {
+  form: ReturnType<typeof useForm<CreateCrewSchemaType>>;
+  roles: Role[];
+  onSubmit: (data: CreateCrewSchemaType) => Promise<void>;
+  disabled?: boolean;
 }
