@@ -1,22 +1,10 @@
 "use client";
-import { CreateCrewMember, CrewMember, METHOD } from "@/types/global";
-import { apiRoutes } from "@/lib/constants";
-import { useCrewStore } from "@/store/crew-store";
-import { useRolesStore } from "@/store/roles-store";
-import useGetCrew from "@/hooks/use-get-crew";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
-import { Button } from "./ui/button";
-import { cn } from "@/lib/utils/utils";
-
+import { useState } from "react";
 import { Edit3, Loader2, Trash2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogHeader,
@@ -27,43 +15,20 @@ import {
   DialogTrigger,
   DialogClose,
 } from "./ui/dialog";
-import { useState } from "react";
 import { Badge } from "./ui/badge";
-import { zodResolver } from "@hookform/resolvers/zod";
 
-import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schemas/crew";
-import { useForm } from "react-hook-form";
+import { useCrewStore } from "@/store/crew-store";
+import { useRolesStore } from "@/store/roles-store";
+import useGetCrew from "@/hooks/use-get-crew";
+
+import { apiRoutes } from "@/lib/constants";
 import { DeleteData, UpdateData } from "@/lib/utils/db-utils";
-import { Skeleton } from "./ui/skeleton";
-import { CrewForm } from "./create-crew";
+import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schemas/crew";
+import { cn } from "@/lib/utils/utils";
+import { CreateCrewMember, CrewMember, METHOD } from "@/types/global";
 
-const formatCellValue = (key: keyof CrewMember, item: CrewMember) => {
-  switch (key) {
-    case "role":
-      return item.role.charAt(0).toLocaleUpperCase() + item.role.slice(1);
-    case "is_active":
-      return item.is_active ? "Active" : "Inactive";
-    case "is_tasked":
-      return (
-        <Badge
-          className={cn(
-            !item.is_active
-              ? "bg-red-500 dark:bg-red-400 "
-              : item.is_tasked
-              ? "bg-gray-500 dark:bg-gray-400"
-              : "bg-green-500 dark:bg-green-400"
-          )}>
-          {!item.is_active
-            ? "Removed"
-            : item.is_tasked
-            ? "Working"
-            : "Available"}
-        </Badge>
-      );
-    default:
-      return item[key];
-  }
-};
+import { CrewForm } from "./create-crew";
+import DataTableWrapper from "./custom-table";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
@@ -167,62 +132,45 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
 
 const CrewTable = () => {
   const { crew, isLoading, isError, crewMemberKeys } = useGetCrew();
-  return isLoading ? (
-    <Skeleton className="h-15 w-full" />
-  ) : (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          {crewMemberKeys.map((rowitem, index) => (
-            <TableHead key={index}>
-              {rowitem
-                .split("_")
-                .map(
-                  (item) => item.charAt(0).toUpperCase() + item.slice(1) + " "
-                )}
-            </TableHead>
-          ))}
-          <TableHead>Settings</TableHead>
-        </TableRow>
-      </TableHeader>
-      {isError ? (
-        <TableRow>
-          <TableCell
-            className="border-none"
-            colSpan={crewMemberKeys.length + 1}>
-            <p className="w-full h-20 flex justify-center items-center text-center ">
-              Something went wrong! Please check your internet connection.
-            </p>
-          </TableCell>
-        </TableRow>
-      ) : (
-        <TableBody>
-          {crew.length > 0 ? (
-            crew.map((item, index) => (
-              <TableRow key={index}>
-                {crewMemberKeys.map((key) => (
-                  <TableCell key={key}>{formatCellValue(key, item)}</TableCell>
-                ))}
-                <TableCell className="flex items-center justify-evenly">
-                  <DeleteCrewButton item={item} />
-                  <UpdateCrewButton item={item} />
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                className="border-none"
-                colSpan={crewMemberKeys.length + 1}>
-                <p className="w-full h-20 flex justify-center items-center text-center ">
-                  No Data Found.
-                </p>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      )}
-    </Table>
+  const formatCellValue = (key: keyof CrewMember, item: CrewMember) => {
+    switch (key) {
+      case "role":
+        return String(
+          item.role?.charAt(0).toLocaleUpperCase() + item.role?.slice(1)
+        );
+      case "is_active":
+        return item.is_active ? "Active" : "Inactive";
+      case "is_tasked":
+        return (
+          <Badge
+            className={cn(
+              !item.is_active
+                ? "bg-red-500 dark:bg-red-400 "
+                : item.is_tasked
+                ? "bg-gray-500 dark:bg-gray-400"
+                : "bg-green-500 dark:bg-green-400"
+            )}>
+            {!item.is_active
+              ? "Removed"
+              : item.is_tasked
+              ? "Working"
+              : "Available"}
+          </Badge>
+        );
+      default:
+        return String(item[key]);
+    }
+  };
+
+  return (
+    <DataTableWrapper
+      columns={crewMemberKeys}
+      data={crew}
+      isError={isError}
+      formatValue={formatCellValue}
+      extraOptions={[DeleteCrewButton, UpdateCrewButton]}
+      isLoading={isLoading}
+    />
   );
 };
 

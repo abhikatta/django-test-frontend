@@ -1,9 +1,14 @@
-// Example usage
+import DataTable from "@/components/custom-table";
 
-import DataTable from "@/components/table";
+interface Data {
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
+}
 
-const columns = ["first_name", "email", "last_name", "role"];
-const data = [
+const columns: (keyof Data)[] = ["first_name", "email", "last_name", "role"];
+const data: Data[] = [
   {
     first_name: "John",
     last_name: "Doe",
@@ -21,7 +26,13 @@ const data = [
 export default function Page() {
   return (
     <div className="p-6">
-      <DataTable columns={columns} data={data} />
+      <DataTable
+        isError={false}
+        isLoading={false}
+        formatValue={(key, item) => item[key]}
+        columns={columns}
+        data={data}
+      />
     </div>
   );
 }

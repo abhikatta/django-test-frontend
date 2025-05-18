@@ -51,7 +51,7 @@ const handleAPICall = async ({
     });
     if (res.ok) {
       // for like DELETE requests, there is no response so returning an empty object
-      if (res.status === 204 || res.status !== 200) {
+      if (res.status === 204) {
         return true;
       }
       return await res.json();
