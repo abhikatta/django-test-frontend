@@ -3,6 +3,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export const apiRoutes = {
   crew: `${BASE_URL}/api/crew/`,
   clients: `${BASE_URL}/api/clients/`,
+  clientWithId: (clientId: string | number) =>
+    apiRoutes.clients + clientId + "/",
   crewWithId: (id: string | number) => apiRoutes.crew + id + "/",
   roles: `${BASE_URL}/api/roles/`,
   accounts: {

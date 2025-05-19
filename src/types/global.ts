@@ -35,6 +35,7 @@ export interface CreateClient {
 export interface Client extends CreateClient {
   id: number; //readonly
   created_at: string; //readonly
+  ongoing_work: boolean;
   user: number; //readonly (current logged in user id)
 }
 

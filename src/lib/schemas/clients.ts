@@ -10,6 +10,7 @@ export const createClientSchema = z.object({
     .max(15, "Max characters exceeded."),
   phone_number: z.coerce.number().min(10, "Pleae enter valid phone number."),
   address: z.string().min(5, "Please enter detailed address."),
+  ongoing_work: z.coerce.boolean(),
 });
 
 export type CreateClientSchemaType = z.infer<typeof createClientSchema>;

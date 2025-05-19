@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ClientFormProps } from "@/types/component-types";
+import { Switch } from "../ui/switch";
 
 const ClientsForm = ({ form, onSubmit }: ClientFormProps) => {
   return (
@@ -65,6 +66,21 @@ const ClientsForm = ({ form, onSubmit }: ClientFormProps) => {
               <FormLabel>Enter Address</FormLabel>
               <FormControl>
                 <Textarea placeholder="Address" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="ongoing_work"
+          render={({ field }) => (
+            <FormItem className="flex flex-row-reverse items-center justify-between gap-x-2">
+              <FormLabel>Is there some ongoing work for this client?</FormLabel>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}></Switch>
               </FormControl>
               <FormMessage />
             </FormItem>

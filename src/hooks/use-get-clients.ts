@@ -14,6 +14,7 @@ const useGetClient = () => {
     "last_name",
     "address",
     "phone_number",
+    "ongoing_work",
   ];
 
   const getClients = useCallback(async () => {

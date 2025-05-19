@@ -31,7 +31,7 @@ export const CrewForm = ({
   return (
     <Form {...form}>
       <form
-        className="flex flex-col items-start justify-center mt-10 gap-y-3 gap-x-5 w-auto"
+        className="flex flex-col items-start justify-center mx-auto mt-10 gap-y-3 gap-x-5 w-auto"
         onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
