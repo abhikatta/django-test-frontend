@@ -29,6 +29,7 @@ import { CreateCrewMember, CrewMember, METHOD } from "@/types/global";
 
 import { CrewForm } from "./create-crew";
 import DataTableWrapper from "./custom-table";
+import { useClientsStore } from "@/store/client-store";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
@@ -85,10 +86,12 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
   const [open, setOpen] = useState(false);
   const { updateCrewMember } = useCrewStore();
   const { roles } = useRolesStore();
+  const { clients } = useClientsStore();
   const form = useForm<CreateCrewSchemaType>({
     resolver: zodResolver(createCrewSchema),
     defaultValues: {
       ...item,
+      client: Number(item.client),
     },
   });
 
@@ -103,7 +106,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
       },
     });
     if (res) {
-      updateCrewMember({ ...data, id: item.id });
+      updateCrewMember({ ...data, id: item.id, client: Number(data.client) });
     }
     setOpen(false);
     setDisabled(false);
@@ -120,6 +123,7 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
           <DialogTitle>Update crew member</DialogTitle>
         </DialogHeader>
         <CrewForm
+          clients={clients}
           disabled={disabled}
           onSubmit={updateCrew}
           roles={roles}

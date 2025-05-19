@@ -18,6 +18,8 @@ const useGetCrew = () => {
     "is_tasked",
     "role",
     "hourly_wage",
+    "client_name",
+    "client_phone_number",
   ];
   const getCrew = useCallback(async () => {
     setIsLoading(true);

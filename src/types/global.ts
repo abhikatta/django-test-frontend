@@ -12,17 +12,30 @@ export interface CreateCrewMember {
   is_active: boolean;
   is_tasked: boolean;
   hourly_wage: number;
+  client?: number | null;
+  client_name?: string | null;
+  client_phone_number?: number | null;
 }
 
 export interface CrewMember extends CreateCrewMember {
   id: number; //readonly
-  //   created_at: string;
-  //   client_id: number; // Working for which client
 }
 
 export interface Role {
   label: string;
   value: string;
+}
+
+export interface CreateClient {
+  first_name: string;
+  last_name: string;
+  phone_number: number;
+  address: string;
+}
+export interface Client extends CreateClient {
+  id: number; //readonly
+  created_at: string; //readonly
+  user: number; //readonly (current logged in user id)
 }
 
 export const enum METHOD {

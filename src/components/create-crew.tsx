@@ -28,10 +28,12 @@ import { PostData } from "@/lib/utils/db-utils";
 import useGetRoles from "@/hooks/use-get-roles";
 import { CrewMember } from "@/types/global";
 import { CrewFormProps } from "@/types/component-types";
+import useGetClient from "@/hooks/use-get-clients";
 
 export const CrewForm = ({
   form,
   roles,
+  clients,
   onSubmit,
   disabled,
 }: CrewFormProps) => {
@@ -109,6 +111,35 @@ export const CrewForm = ({
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="client"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Select Client</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={String(field.value)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a Client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {clients.map((client, index) => (
+                        <SelectItem key={index} value={String(client.id)}>
+                          {client.first_name} {client.last_name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="flex flex-row items-center w-auto justify-between gap-x-2">
           <FormField
             control={form.control}
@@ -172,6 +203,7 @@ export const CrewForm = ({
 const CreateCrewForm = () => {
   const { addCrewMember } = useCrewStore();
   const { roles } = useGetRoles();
+  const { clients } = useGetClient();
   const form = useForm<CreateCrewSchemaType>({
     resolver: zodResolver(createCrewSchema),
     defaultValues: {
@@ -182,6 +214,7 @@ const CreateCrewForm = () => {
       is_tasked: false,
       role: "",
       hourly_wage: 0,
+      client: undefined,
     },
   });
 
@@ -195,7 +228,9 @@ const CreateCrewForm = () => {
     }
   };
 
-  return <CrewForm onSubmit={onSubmit} roles={roles} form={form} />;
+  return (
+    <CrewForm onSubmit={onSubmit} roles={roles} form={form} clients={clients} />
+  );
 };
 
 export default CreateCrewForm;

@@ -6,7 +6,7 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
-import { Role } from "./global";
+import { Client, Role } from "./global";
 import { useForm } from "react-hook-form";
 
 export interface PillPosition {
@@ -32,6 +32,7 @@ export interface NavItem {
 export interface CrewFormProps {
   form: ReturnType<typeof useForm<CreateCrewSchemaType>>;
   roles: Role[];
+  clients: Client[];
   onSubmit: (data: CreateCrewSchemaType) => Promise<void>;
   disabled?: boolean;
 }

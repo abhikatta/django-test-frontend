@@ -17,6 +17,7 @@ export const createCrewSchema = z.object({
   is_tasked: z.boolean(),
   hourly_wage: z.coerce.number().min(0),
   role: z.string(),
+  client: z.coerce.number().optional(),
 });
 
 export type CreateCrewSchemaType = z.infer<typeof createCrewSchema>;
