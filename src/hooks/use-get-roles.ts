@@ -16,8 +16,12 @@ const useGetRoles = () => {
   }, [setRoles]);
 
   useEffect(() => {
-    getRoles();
-  }, [getRoles]);
+    if (roles.length > 0) {
+      return;
+    } else {
+      getRoles();
+    }
+  }, [getRoles, roles]);
 
   return { roles };
 };

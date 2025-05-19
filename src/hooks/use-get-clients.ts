@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const useGetClient = () => {
   const { clients, setClients } = useClientsStore();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const clientDataKeys: (keyof Client)[] = [
     "first_name",
@@ -28,8 +28,11 @@ const useGetClient = () => {
   }, [setClients]);
 
   useEffect(() => {
+    if (clients.length > 0) {
+      return;
+    }
     getClients();
-  }, [getClients]);
+  }, [getClients, clients]);
 
   return { clientDataKeys, clients, isLoading, isError };
 };

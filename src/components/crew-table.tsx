@@ -1,20 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Edit3, Loader2, Trash2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "./ui/button";
-import {
-  Dialog,
-  DialogHeader,
-  DialogContent,
-  DialogFooter,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "./ui/dialog";
 import { Badge } from "./ui/badge";
 
 import { useCrewStore } from "@/store/crew-store";
@@ -27,9 +17,10 @@ import { createCrewSchema, CreateCrewSchemaType } from "@/lib/schemas/crew";
 import { cn } from "@/lib/utils/utils";
 import { CreateCrewMember, CrewMember, METHOD } from "@/types/global";
 
-import { CrewForm } from "./create-crew";
+import { CrewForm } from "./forms/crew-form";
 import DataTableWrapper from "./custom-table";
 import { useClientsStore } from "@/store/client-store";
+import { DeleteButtonInner, UpdateButtonInner } from "./reusable/buttons";
 
 const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
   const { removeCrewMember } = useCrewStore();
@@ -51,33 +42,16 @@ const DeleteCrewButton = ({ item }: { item: CrewMember }) => {
 
   const fullName = `${item.first_name} ${item.last_name}`;
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="destructive" size={"icon"}>
-          <Trash2 />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Delete {fullName}?</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete your crew member {fullName}? This
-            action is irreversible!
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button disabled={disabled}>Cancel</Button>
-          </DialogClose>
-          <Button
-            disabled={disabled}
-            variant={"destructive"}
-            onClick={() => deleteCrew(item.id)}>
-            {disabled && <Loader2 className="animate-spin" />} Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <DeleteButtonInner
+      dialogTitle={`Delete ${fullName}?`}
+      dialogDescription={`Are you sure you want to delete your crew member ${fullName}? This action is irreversible!`}>
+      <Button
+        disabled={disabled}
+        variant={"destructive"}
+        onClick={() => deleteCrew(item.id)}>
+        {disabled && <Loader2 className="animate-spin" />} Delete
+      </Button>
+    </DeleteButtonInner>
   );
 };
 
@@ -112,25 +86,18 @@ const UpdateCrewButton = ({ item }: { item: CrewMember }) => {
     setDisabled(false);
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant={"outline"} size={"icon"}>
-          <Edit3 />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Update crew member</DialogTitle>
-        </DialogHeader>
-        <CrewForm
-          clients={clients}
-          disabled={disabled}
-          onSubmit={updateCrew}
-          roles={roles}
-          form={form}
-        />
-      </DialogContent>
-    </Dialog>
+    <UpdateButtonInner
+      dialogTitle="Update crew member"
+      setOpen={setOpen}
+      open={open}>
+      <CrewForm
+        clients={clients}
+        disabled={disabled}
+        onSubmit={updateCrew}
+        roles={roles}
+        form={form}
+      />
+    </UpdateButtonInner>
   );
 };
 

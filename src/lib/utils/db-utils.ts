@@ -48,6 +48,7 @@ const handleAPICall = async ({
       headers,
       credentials: "include",
       ...(body ? { body: JSON.stringify(body) } : {}),
+      ...(method === "GET" ? { cache: "force-cache" } : {}),
     });
     if (res.ok) {
       // for like DELETE requests, there is no response so returning an empty object

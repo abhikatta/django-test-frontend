@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { HTMLAttributes, JSX, useRef, useState } from "react";
 
 import {
   Dialog,
@@ -16,6 +16,8 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { PostData } from "@/lib/utils/db-utils";
 import { apiRoutes } from "@/lib/constants";
 import { ButtonProps } from "@/types/component-types";
+import { Edit3, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils/utils";
 
 export const FormNavButton = ({
   name,
@@ -86,6 +88,67 @@ export const SignOutButton = ({
               Sign out
             </Button>
           </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export const DeleteButtonInner = ({
+  dialogTitle,
+  dialogDescription,
+  children,
+}: HTMLAttributes<HTMLElement> & {
+  dialogTitle: string;
+  dialogDescription: string;
+}) => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="destructive" size={"icon"}>
+          <Trash2 />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogDescription>{dialogDescription}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button>Cancel</Button>
+          </DialogClose>
+          {children}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export const UpdateButtonInner = ({
+  dialogTitle,
+  children,
+  open,
+  className,
+  setOpen,
+}: HTMLAttributes<HTMLElement> & {
+  dialogTitle: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) => {
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant={"outline"} size={"icon"}>
+          <Edit3 />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="flex flex-col items-center justify-center w-full">
+        <DialogHeader>
+          <DialogTitle>{dialogTitle}</DialogTitle>
+        </DialogHeader>
+        <DialogFooter className={cn("w-full", className)}>
+          {children}
         </DialogFooter>
       </DialogContent>
     </Dialog>

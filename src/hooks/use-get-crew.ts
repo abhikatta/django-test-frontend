@@ -23,6 +23,10 @@ const useGetCrew = () => {
   ];
   const getCrew = useCallback(async () => {
     setIsLoading(true);
+    if (crew.length > 0) {
+      setIsLoading(false);
+      return;
+    }
     const crewData = await GetData<CrewMember[]>({ url: apiRoutes.crew });
     if (crewData) {
       setCrew(crewData);
@@ -30,7 +34,7 @@ const useGetCrew = () => {
       setIsError(true);
     }
     setIsLoading(false);
-  }, [setCrew]);
+  }, [setCrew, crew.length]);
 
   useEffect(() => {
     getCrew();

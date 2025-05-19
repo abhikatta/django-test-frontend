@@ -7,7 +7,8 @@ import {
   SetStateAction,
 } from "react";
 import { Client, Role } from "./global";
-import { useForm } from "react-hook-form";
+import { FieldValues, UseFormReturn } from "react-hook-form";
+import { CreateClientSchemaType } from "@/lib/schemas/clients";
 
 export interface PillPosition {
   left: number;
@@ -29,10 +30,15 @@ export interface NavItem {
   >;
 }
 
-export interface CrewFormProps {
-  form: ReturnType<typeof useForm<CreateCrewSchemaType>>;
+export interface FormProps<T extends FieldValues> {
+  form: UseFormReturn<T>;
+  onSubmit: (data: T) => Promise<void>;
+}
+
+export interface CrewFormProps extends FormProps<CreateCrewSchemaType> {
   roles: Role[];
   clients: Client[];
-  onSubmit: (data: CreateCrewSchemaType) => Promise<void>;
   disabled?: boolean;
 }
+
+export type ClientFormProps = FormProps<CreateClientSchemaType>;
